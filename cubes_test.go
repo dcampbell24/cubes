@@ -1,9 +1,16 @@
 package cubes
-/*
+
 import (
 	"fmt"
 	"testing"
 )
+
+func TestAllRots(_ *testing.T) {
+	r := slugs[0].AllRots()
+	for _, v := range r {
+		fmt.Println(v)
+	}
+}
 
 func TestSearch(_ *testing.T) {
 	cube := newCube(3)
@@ -19,4 +26,3 @@ func BenchmarkSearch(b *testing.B) {
 		search(slugs, cube)
 	}
 }
-*/
