@@ -148,20 +148,23 @@ func (sl VecSlice) AllPuts(cube Cube) []VecSlice {
 		s.Trans(-Zmin, Z)
 
 		Xmax, Ymax, Zmax := s.Max()
-		fmt.Println(Xmax, Ymax, Zmax)
-		fmt.Println(s)
 		for x := Xmax; x < 3; x++ {
+			px := NewVecSlice(len(s))
+			px.Cpy(s)
+			px.Trans(x - Xmax, X)
 			for y := Ymax; y < 3; y++ {
+				py := NewVecSlice(len(px))
+				py.Cpy(px)
+				py.Trans(y - Ymax, Y)
 				for z := Zmax; z < 3; z++ {
-					if s.IsLegal(cube) {
-						c := NewVecSlice(len(s))
-						allputs = append(allputs, c.Cpy(s))
+					pz := NewVecSlice(len(py))
+					pz.Cpy(py)
+					pz.Trans(z - Zmax, Z)
+					if pz.IsLegal(cube) {
+						allputs = append(allputs, pz)
 					}
-				s.Trans(1, Z)
 				}
-			s.Trans(1, Y)
 			}
-		s.Trans(1, X)
 		}
 	}
 	return allputs
