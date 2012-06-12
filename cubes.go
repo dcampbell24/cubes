@@ -12,12 +12,12 @@ const (
 )
 
 var (
-	minotaur = []VecSlice{{{0,1,0,1}, {1,0,0,1}, {1,1,0,1}, {1,0,1,1}},
-						  {{0,1,0,2}, {1,1,0,2}, {1,1,1,2}, {1,0,1,2}},
-						  {{0,1,1,3}, {1,1,1,3}, {1,1,0,3}, {0,2,0,3}},
-						  {{0,0,0,4}, {1,0,0,4}, {2,0,0,4}, {1,1,0,4}},
-		                  {{0,0,0,5}, {1,0,0,5}, {0,1,0,5}, {0,2,0,5}, {0,1,1,5}},
-						  {{0,0,1,6}, {0,1,1,6}, {0,1,0,6}, {0,2,0,6}, {1,1,0,6}}}
+	minotaur = []VecSlice{{{0,1,0,2}, {1,1,0,2}, {1,0,0,2}, {1,0,1,2}},
+						  {{0,1,0,3}, {1,1,0,3}, {1,1,1,3}, {1,0,1,3}},
+						  {{0,0,0,5}, {1,0,0,5}, {2,0,0,5}, {1,1,0,5}},
+						  {{0,0,1,4}, {0,1,1,4}, {0,1,0,4}, {0,2,0,4}, {1,1,0,4}},
+		                  {{0,2,0,6}, {1,0,1,6}, {1,1,1,6}, {1,1,0,6}, {1,2,0,6}},
+						  {{0,0,0,1}, {0,1,0,1}, {0,2,0,1}, {1,0,0,1}, {0,1,1,1}}}
 
 	slugs    = []VecSlice{{{0,0,0,1}, {1,0,0,1}, {2,0,0,1},
 	                       {0,1,0,1}, {1,1,0,1}, {2,1,0,1},
@@ -58,6 +58,7 @@ func (cube Cube) VecSlice() VecSlice {
 	return s
 }
 
+// This does not do what I want.
 func (a VecSlice) Congru(b VecSlice) bool {
 	a1 := NewVecSlice(len(a)).Canonical(a)
 	b1 := NewVecSlice(len(b))
@@ -77,15 +78,15 @@ func (s VecSlice) String() string {
 	return str
 }
 
-// Sort the vectors and then tranlate all the vectors so that the min vector
-// is at (0, 0, 0).
+// Translate the VecSlice so that it's min x, y, and z values are all 0 and
+// sort the vectors.
 func (a VecSlice) Canonical(b VecSlice) VecSlice {
 	a.Cpy(b)
 	sort.Sort(a)
-	d := a[0]
-	for _, v := range a {
-		v.Sub(v, d)
-	}
+	Xmin, Ymin, Zmin := a.Min()
+	a.Trans(-Xmin, X)
+	a.Trans(-Ymin, Y)
+	a.Trans(-Zmin, Z)
 	return a
 }
 
@@ -142,6 +143,7 @@ func (a VecSlice) Max() (int, int, int) {
 func (sl VecSlice) AllPuts(cube Cube) []VecSlice {
 	allputs := make([]VecSlice, 0)
 	for _, s := range sl.AllRots() {
+		// FIXME redundant
 		Xmin, Ymin, Zmin := s.Min()
 		s.Trans(-Xmin, X)
 		s.Trans(-Ymin, Y)
@@ -335,13 +337,12 @@ func search(ss []VecSlice, cube Cube) {
 		SOL = append(SOL, cube)
 		return
 	}
-	sap := ss[len(ss)-1].AllPuts(cube)
 	puts := make([]Cube, 0)
 loop:
-	for _, v := range sap {
+	for _, v := range ss[len(ss)-1].AllPuts(cube) {
 		c1 := newCube(3)
 		c1.Cpy(cube)
-		c1.Place(v, len(ss))
+		c1.Place(v, v[0].id)
 		vs := c1.VecSlice()
 		for _, w := range puts {
 			if w.VecSlice().Congru(vs) {
