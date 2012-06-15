@@ -77,12 +77,10 @@ func (cube Cube) VecSlice() VecSlice {
 	return s
 }
 
-// This does not do what I want.
 func (a VecSlice) Congru(b VecSlice) bool {
 	a1 := NewVecSlice(len(a)).Canonical(a)
-	b1 := NewVecSlice(len(b))
-	for _, sb := range b.AllRots() {
-		if a1.Eq(b1.Canonical(sb)) {
+	for _, rb := range b.AllRots() {
+		if a1.Eq(rb) {
 			return true
 		}
 	}
