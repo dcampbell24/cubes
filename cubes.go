@@ -32,6 +32,25 @@ var (
 	                       {0,2,0,3}, {1,2,0,3}, {2,2,0,3}}}
 )
 
+// X, Y, Z rotation matricies
+var mrots [4][3][3][3]int
+
+func init() {
+	for i := range mrots {
+	θ := i*90
+	mrot := [3][3][3]int{{{      1,       0,       0},
+	                      {      0,  cos(θ), -sin(θ)},
+	                      {      0,  sin(θ),  cos(θ)}},
+	                     {{ cos(θ),       0,  sin(θ)},
+	                      {      0,       1,       0},
+	                      {-sin(θ),       0,  cos(θ)}},
+	                     {{ cos(θ), -sin(θ),       0},
+	                      { sin(θ),  cos(θ),       0},
+	                      {      0,       0,       1}}}
+	mrots[i] = mrot
+	}
+}
+
 type VecSlice []*Vec3
 
 func NewVecSlice(i int) VecSlice {
@@ -216,21 +235,10 @@ func (a VecSlice) Cpy(b VecSlice) VecSlice {
 }
 
 func (s VecSlice) Rot(θ, axis int) VecSlice {
-	// X, Y, Z rotation matricies
-	// Calculating all of these matricies every time is wasteful!
-	mrot := [][][]int{{{      1,       0,       0},
-	                   {      0,  cos(θ), -sin(θ)},
-	                   {      0,  sin(θ),  cos(θ)}},
-	                  {{ cos(θ),       0,  sin(θ)},
-	                   {      0,       1,       0},
-	                   {-sin(θ),       0,  cos(θ)}},
-	                  {{ cos(θ), -sin(θ),       0},
-	                   { sin(θ),  cos(θ),       0},
-	                   {      0,       0,       1}}}
 	v2 := new(Vec3)
 	for _, v := range s {
 		v2.Cpy(v)
-		v.Mul(mrot[axis], v2)
+		v.Mul(&mrots[θ/90][axis], v2)
 	}
 	return s
 }
@@ -268,7 +276,6 @@ func (s VecSlice) AllRots() []VecSlice {
 	return rots
 }
 
-// FIXME??
 func (vs VecSlice) Trans(dist, axis int) VecSlice {
 	switch axis {
 	case X:
@@ -331,7 +338,6 @@ func (c Cube) Place(s VecSlice, n int) {
 
 var SOL = make([]Cube, 0)
 
-// make AllPuts return cubes rather than pieces.
 func search(ss []VecSlice, cube Cube) {
 	if len(ss) == 0 {
 		SOL = append(SOL, cube)
