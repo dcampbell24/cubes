@@ -22,9 +22,9 @@ func TestAllPuts(_ *testing.T) {
 */
 
 func TestSearch(_ *testing.T) {
-	cube := newCube(3)
-	search(minotaur, cube)
-	//search(slugs, cube)
+	cube := NewCube(3)
+	Search(Minotaur, cube)
+	Search(slugs, cube)
 	fmt.Println(SOL)
 	fmt.Println(len(SOL))
 }

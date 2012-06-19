@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	minotaur = []VecSlice{{{0,1,0,2}, {1,1,0,2}, {1,0,0,2}, {1,0,1,2}},
+	Minotaur = []VecSlice{{{0,1,0,2}, {1,1,0,2}, {1,0,0,2}, {1,0,1,2}},
 						  {{0,1,0,3}, {1,1,0,3}, {1,1,1,3}, {1,0,1,3}},
 						  {{0,0,0,5}, {1,0,0,5}, {2,0,0,5}, {1,1,0,5}},
 						  {{0,0,1,4}, {0,1,1,4}, {0,1,0,4}, {0,2,0,4}, {1,1,0,4}},
@@ -51,6 +51,36 @@ func init() {
 	}
 }
 
+type OBJ struct {
+	//name string
+	vs [][3]int // verticies
+	fs [][4]int // faces
+}
+
+func (o OBJ) String() string {
+	str := "# Go generated OBJ file.\n"
+	for _, v := range o.vs {
+		str += fmt.Sprintf("v %d %d %d\n", v[0], v[1], v[2])
+	}
+	for _, f := range o.fs {
+		str += fmt.Sprintf("f %d %d %d %d\n", f[0], f[1], f[2], f[3])
+	}
+	return str
+}
+
+// This could be represented with fewer verticies and faces, but would be more
+// work and may not be of much benefit.
+func (a *OBJ) Join(b *OBJ) {
+	l := len(a.vs)
+	a.vs = append(a.vs, b.vs...)
+	for i, f := range b.fs {
+		for j := range f {
+			b.fs[i][j] += l
+		}
+	}
+	a.fs = append(a.fs, b.fs...)
+}
+
 type VecSlice []*Vec3
 
 func NewVecSlice(i int) VecSlice {
@@ -61,15 +91,24 @@ func NewVecSlice(i int) VecSlice {
 	return a
 }
 
+func (s VecSlice) Obj() *OBJ {
+	obj := new(OBJ)
+	for _, v := range s {
+		obj.Join(v.cube())
+	}
+	return obj
+}
+
+
 func (cube Cube) VecSlice() VecSlice {
 	s := VecSlice{}
 	for i, x := range cube {
 		for j, y := range x {
 			for k, z := range y {
 				if z != 0 {
-					s = append(s, &Vec3{X:i, Y:j, Z:k, id: 1})
+					s = append(s, &Vec3{X:i, Y:j, Z:k, ID: 1})
 				} else {
-					s = append(s, &Vec3{X:i, Y:j, Z:k, id: 0})
+					s = append(s, &Vec3{X:i, Y:j, Z:k, ID: 0})
 				}
 			}
 		}
@@ -308,7 +347,7 @@ func (cube Cube) String() string {
 	return s + "\n------------------------"
 }
 
-func newCube(n int) Cube {
+func NewCube(n int) Cube {
 	cube := make([][][]int, n)
 	for i := range cube {
 		cube[i] = make([][]int, n)
@@ -336,7 +375,7 @@ func (c Cube) Place(s VecSlice, n int) {
 
 var SOL = make([]Cube, 0)
 
-func search(ss []VecSlice, cube Cube) {
+func Search(ss []VecSlice, cube Cube) {
 	if len(ss) == 0 {
 		SOL = append(SOL, cube)
 		return
@@ -344,9 +383,9 @@ func search(ss []VecSlice, cube Cube) {
 	puts := make([]Cube, 0)
 loop:
 	for _, v := range ss[len(ss)-1].AllPuts(cube) {
-		c1 := newCube(3)
+		c1 := NewCube(3)
 		c1.Cpy(cube)
-		c1.Place(v, v[0].id)
+		c1.Place(v, v[0].ID)
 		vs := c1.VecSlice()
 		for _, w := range puts {
 			if w.VecSlice().Congru(vs) {
@@ -356,6 +395,6 @@ loop:
 		puts = append(puts, c1)
 	}
 	for _, p := range puts {
-		search(ss[:len(ss)-1], p)
+		Search(ss[:len(ss)-1], p)
 	}
 }

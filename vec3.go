@@ -6,7 +6,7 @@ import (
 
 type Vec3 struct {
 	X, Y, Z int
-	id int // the id of the piece the vector belongs to.
+	ID int // the id of the piece the vector belongs to.
 }
 
 func (a *Vec3) Sub(b, c *Vec3) *Vec3 {
@@ -27,7 +27,7 @@ func (a *Vec3) Cpy(b *Vec3) *Vec3 {
 	a.X = b.X
 	a.Y = b.Y
 	a.Z = b.Z
-	a.id = b.id
+	a.ID = b.ID
 	return a
 }
 
@@ -39,5 +39,22 @@ func (a *Vec3) Eq(b *Vec3) bool {
 	return a.X == b.X &&
 	       a.Y == b.Y &&
 		   a.Z == b.Z &&
-		   a.id == b.id
+		   a.ID == b.ID
+}
+
+func (v Vec3) cube() *OBJ {
+	return &OBJ{[][3]int{{v.X,   v.Y,   v.Z},    // 1
+	                     {v.X+1, v.Y,   v.Z},    // 2
+	                     {v.X,   v.Y+1, v.Z},    // 3
+	                     {v.X+1, v.Y+1, v.Z},    // 4
+	                     {v.X,   v.Y,   v.Z+1},  // 5
+	                     {v.X+1, v.Y,   v.Z+1},  // 6
+	                     {v.X,   v.Y+1, v.Z+1},  // 7
+	                     {v.X+1, v.Y+1, v.Z+1}}, // 8
+	           [][4]int {{1, 2, 4, 3},
+	                     {1, 5, 7, 3},
+	                     {1, 2, 6, 5},
+	                     {8, 7, 3, 4},
+	                     {8, 7, 5, 6},
+	                     {8, 4, 2, 6}}}
 }
