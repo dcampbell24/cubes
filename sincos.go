@@ -1,3 +1,7 @@
+// Copyright 2012 David Campbell.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 package cubes
 
 func sin(theta int) int {
