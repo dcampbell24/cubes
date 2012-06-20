@@ -145,10 +145,7 @@ func (s VecSlice) String() string {
 func (a VecSlice) Canonical(b VecSlice) VecSlice {
 	a.Cpy(b)
 	sort.Sort(a)
-	Xmin, Ymin, Zmin := a.Min()
-	a.Trans(-Xmin, X)
-	a.Trans(-Ymin, Y)
-	a.Trans(-Zmin, Z)
+	a.PushToZero()
 	return a
 }
 
@@ -161,8 +158,7 @@ func (a VecSlice) IsLegal(cube Cube) bool {
 	return true
 }
 
-// Return which vectors in the slice have the min x, y, and z values.
-func (a VecSlice) Min() (int, int, int) {
+func (a VecSlice) PushToZero() {
 	x, y, z := a[0].X, a[0].Y, a[0].Z
 	for _, v := range a {
 		if v.X < x {
@@ -175,7 +171,9 @@ func (a VecSlice) Min() (int, int, int) {
 			z = v.Z
 		}
 	}
-	return x, y, z
+	a.Trans(-x, X)
+	a.Trans(-y, Y)
+	a.Trans(-z, Z)
 }
 
 func (a VecSlice) Max() (int, int, int) {
@@ -205,12 +203,6 @@ func (a VecSlice) Max() (int, int, int) {
 func (sl VecSlice) AllPuts(cube Cube) []VecSlice {
 	allputs := make([]VecSlice, 0)
 	for _, s := range sl.AllRots() {
-		// FIXME redundant
-		Xmin, Ymin, Zmin := s.Min()
-		s.Trans(-Xmin, X)
-		s.Trans(-Ymin, Y)
-		s.Trans(-Zmin, Z)
-
 		Xmax, Ymax, Zmax := s.Max()
 		for x := Xmax; x < 3; x++ {
 			px := NewVecSlice(len(s))
