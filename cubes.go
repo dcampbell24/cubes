@@ -122,16 +122,6 @@ func (cube Cube) VecSlice() VecSlice {
 	return s
 }
 
-func (a VecSlice) Congru(b VecSlice) bool {
-	a1 := NewVecSlice(len(a)).Canonical(a)
-	for _, rb := range b.AllRots() {
-		if a1.Eq(rb) {
-			return true
-		}
-	}
-	return false
-}
-
 func (s VecSlice) String() string {
 	str := ""
 	for _, v := range s {
@@ -379,18 +369,23 @@ func Search(ss []VecSlice, cube Cube) {
 		return
 	}
 	puts := make([]Cube, 0)
+	cputs := make([]VecSlice, 0)
 loop:
 	for _, v := range ss[len(ss)-1].AllPuts(cube) {
 		c1 := NewCube(3)
 		c1.Cpy(cube)
 		c1.Place(v, v[0].ID)
-		vs := c1.VecSlice()
-		for _, w := range puts {
-			if w.VecSlice().Congru(vs) {
-				continue loop
+		allRots := c1.VecSlice().AllRots()
+		for _, w := range cputs {
+			for _, rot := range allRots {
+				if w.Eq(rot) {
+					continue loop
+				}
 			}
 		}
 		puts = append(puts, c1)
+		canon := c1.VecSlice()
+		cputs = append(cputs, canon.Canonical(canon))
 	}
 	for _, p := range puts {
 		Search(ss[:len(ss)-1], p)
