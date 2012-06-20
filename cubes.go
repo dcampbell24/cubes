@@ -122,6 +122,28 @@ func (cube Cube) VecSlice() VecSlice {
 	return s
 }
 
+func (cube Cube) VecSlices() []VecSlice {
+	p := 0
+	for _, x := range cube {
+		for _, y := range x {
+			for _, z := range y {
+				if z > p {
+					p = z
+				}
+			}
+		}
+	}
+	s := make([]VecSlice, p)
+	for i, x := range cube {
+		for j, y := range x {
+			for k, z := range y {
+				s[z-1] = append(s[z-1], &Vec3{X:i, Y:j, Z:k, ID: z})
+			}
+		}
+	}
+	return s
+}
+
 func (s VecSlice) String() string {
 	str := ""
 	for _, v := range s {
