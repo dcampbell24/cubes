@@ -9,34 +9,31 @@ import (
 	"testing"
 )
 
-/*
-func TestAllRots(_ *testing.T) {
-	r := slugs[0].AllRots()
-	for _, v := range r {
-		fmt.Println(v)
-	}
-}
+var (
+	minotaur = []VecSlice{{{0,1,0,2}, {1,1,0,2}, {1,0,0,2}, {1,0,1,2}},
+						  {{0,1,0,3}, {1,1,0,3}, {1,1,1,3}, {1,0,1,3}},
+						  {{0,0,0,5}, {1,0,0,5}, {2,0,0,5}, {1,1,0,5}},
+						  {{0,0,1,4}, {0,1,1,4}, {0,1,0,4}, {0,2,0,4}, {1,1,0,4}},
+		                  {{0,2,0,6}, {1,0,1,6}, {1,1,1,6}, {1,1,0,6}, {1,2,0,6}},
+						  {{0,0,0,1}, {0,1,0,1}, {0,2,0,1}, {1,0,0,1}, {0,1,1,1}}}
 
-func TestAllPuts(_ *testing.T) {
-	r := slugs[0].AllPuts(newCube(3))
-	for _, v := range r {
-		fmt.Println(v)
-	}
-}
-*/
+	slugs    = []VecSlice{{{0,0,0,1}, {1,0,0,1}, {2,0,0,1},
+	                       {0,1,0,1}, {1,1,0,1}, {2,1,0,1},
+	                       {0,2,0,1}, {1,2,0,1}, {2,2,0,1}},
+
+	                      {{0,0,0,2}, {1,0,0,2}, {2,0,0,2},
+	                       {0,1,0,2}, {1,1,0,2}, {2,1,0,2},
+	                       {0,2,0,2}, {1,2,0,2}, {2,2,0,2}},
+
+		                  {{0,0,0,3}, {1,0,0,3}, {2,0,0,3},
+	                       {0,1,0,3}, {1,1,0,3}, {2,1,0,3},
+	                       {0,2,0,3}, {1,2,0,3}, {2,2,0,3}}}
+)
 
 func TestSearch(_ *testing.T) {
 	cube := NewCube(3)
-	Search(Minotaur, cube)
+	Search(minotaur, cube)
 	Search(slugs, cube)
 	fmt.Println(SOL)
 	fmt.Println(len(SOL))
 }
-/*
-func BenchmarkSearch(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		cube := newCube(3)
-		search(slugs, cube)
-	}
-}
-*/
