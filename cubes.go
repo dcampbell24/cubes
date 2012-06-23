@@ -2,9 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// Cubes is a package for manipulating the pieces of a cube in order to find ways of
-// putting them together.
-package cubes
+package main
 
 import (
 	"fmt"
