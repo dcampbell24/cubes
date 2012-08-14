@@ -188,9 +188,63 @@ function dense_to_sparse(cube)
     sparse
 end
 
-function Search(ss, cube, sols)
+
+function flip(bit)
+    if bit == 0
+        return 1
+    end
+    0
+end
+
+function island_vols(cube)
+    cube1 = copy(cube)
+    s = dense_to_sparse(map(flip, cube1))
+    holes = Dict()
+    for i in 1:size(s, 2)
+        holes[s[:, i]] = s[:, i]
+    end
+    vols = Int[]
+    while !isempty(holes)
+        volume = 0
+        Q = {values(holes)[1]}
+        while !isempty(Q)
+            n = pop(Q)
+            if cube1[n[X], n[Y], n[Z]] == 0
+                del(holes, n)
+                volume += 1
+                cube1[n[X], n[Y], n[Z]] = 1
+                xmax, ymax, zmax = size(cube1)
+                if n[X] < xmax
+                    push(Q, [n[X]+1, n[Y], n[Z]])
+                end
+                if n[X] > 1
+                    push(Q, [n[X]-1, n[Y], n[Z]])
+                end
+                if n[Y] < ymax
+                    push(Q, [n[X], n[Y]+1, n[Z]])
+                end
+                if n[Y] > 1
+                    push(Q, [n[X], n[Y]-1, n[Z]])
+                end
+                if n[Z] < zmax
+                    push(Q, [n[X], n[Y], n[Z]+1])
+                end
+                if n[Z] > 1
+                    push(Q, [n[X], n[Y], n[Z]-1])
+                end
+            end
+        end
+        push(vols, volume)
+    end
+    vols
+end
+
+function search(ss, cube, sols)
     if length(ss) == 0
         push(sols, cube)
+        return
+    end
+    if min(island_vols(cube)) < size(ss[1], 2)
         return
     end
     puts = {}
@@ -206,6 +260,6 @@ function Search(ss, cube, sols)
         end
     end
     for p in puts
-        Search(ss[1:end-1], p, sols)
+        search(ss[1:end-1], p, sols)
     end
 end
