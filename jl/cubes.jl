@@ -1,6 +1,8 @@
 # Copyright 2012 David Campbell.
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
+load("profile.jl")
+
 const X = 1
 const Y = 2
 const Z = 3
@@ -66,6 +68,8 @@ const MROTS = Array(Int, (3, 3, 3, 3))
 # 0, 90, 180, and 270 degrees
 const SIN = [0, 1, 0, -1]
 const COS = [1, 0, -1, 0]
+
+@profile begin
 
 function init()
     mrot  = Array(Int, (3, 3, 3))
@@ -262,4 +266,49 @@ function search(ss, cube, sols)
     for p in puts
         search(ss[1:end-1], p, sols)
     end
+end
+end # @profile
+
+type Obj
+    verts
+    faces
+end
+
+function Obj(pt::Vector)
+	Obj([pt[X] pt[X]+1 pt[X]   pt[X]+1 pt[X]   pt[X]+1 pt[X]   pt[X]+1
+         pt[Y] pt[Y]   pt[Y]+1 pt[Y]+1 pt[Y]   pt[Y]   pt[Y]+1 pt[Y]+1
+         pt[Z] pt[Z]   pt[Z]   pt[Z]   pt[Z]+1 pt[Z]+1 pt[Z]+1 pt[Z]+1],
+        [1 1 1 8 8 8  1 1 1 8 8 8
+         2 5 2 7 7 4  4 7 6 3 5 2
+         4 7 6 3 5 2  3 3 5 4 6 6])
+end
+
+# Don't bother eliminating duplicate faces.
+function join(a::Obj, b::Obj)
+    l = size(a, 2)
+    a.verts = hcat(a.verts, b.verts)
+    a.faces = hcat(a.faces, b.faces + l)
+    a
+end
+
+function Obj(piece::Array{Int, 2})
+    obj = Obj(piece[:, 1])
+    l = length
+    for i = 2:size(piece, 2)
+        join(obj, Obj(piece[:, i]))
+    end
+    obj
+end
+
+function show(o::Obj)
+    str = "# Julia generated OBJ file.\n"
+    for i = 1:size(o.verts, 2)
+        v = o.verts[:, i]
+        str = strcat(str, "v $(v[X]) $(v[Y]) $(v[Z])\n")
+    end
+    for i = 1:size(o.faces, 2)
+        f = o.faces[:, i]
+        str = strcat(str, "f $(f[1]) $(f[2]) $(f[3])\n")
+    end
+    return str
 end
