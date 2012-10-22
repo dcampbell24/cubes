@@ -82,9 +82,9 @@ contains
         integer             :: p2(3, 3, 3)
 
         p2 = 0
-        do i = 1, size(p1, 2)
+        forall (i = 1:size(p1, 2))
             p2(p1(1, i), p1(2, i), p1(3, i)) = 1
-        end do
+        end forall
     end function
 
     function contains_p (a, p) result(b)
@@ -121,9 +121,8 @@ contains
         do i = 0, 3
             do j = 0, 3
                 do k = 0, 3
-                    ! do some tests then maybe add it
                     p1 = push_to_one(p1)
-                    d = sparse_to_dense(p1) !FIXME
+                    d = sparse_to_dense(p1)
                     if (.not.contains_p(ps%d, p1)) then
                         ps%length = ps%length + 1
                         ps%val(:, :, ps%length) = p1
