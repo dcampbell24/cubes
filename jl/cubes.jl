@@ -198,6 +198,7 @@ end
 
 function island_vols(cube)
     cube1 = copy(cube)
+    xmax, ymax, zmax = size(cube1)
     s = dense_to_sparse(map(flip, cube1))
     holes = Dict()
     for i in 1:size(s, 2)
@@ -213,7 +214,6 @@ function island_vols(cube)
                 del(holes, n)
                 volume += 1
                 cube1[n[X], n[Y], n[Z]] = 1
-                xmax, ymax, zmax = size(cube1)
                 if n[X] < xmax
                     push(Q, [n[X]+1, n[Y], n[Z]])
                 end
