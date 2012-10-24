@@ -19,8 +19,13 @@ program cubes
     use list_module
     implicit none
 
+    logical, parameter       :: elim_islands = .true.
     integer, parameter       :: isin(0:3) = (/ 0, 1,  0, -1 /), &
                                 icos(0:3) = (/ 1, 0, -1,  0 /)
+    integer, parameter       :: eye(3, 3) = reshape((/ 1, 0, 0,       &
+                                                       0, 1, 0,       &
+                                                       0, 0, 1 /),    &
+                                                    (/ 3, 3 /))
     integer                  :: mrot(3, 3, 3, 4), cube(3, 3, 3)
     type(piece), allocatable :: ps(:)
     type(list)               :: sols
@@ -195,6 +200,52 @@ contains
         end do
     end function
 
+    ! Use flood fill to find the smallest island volume.
+    function min_island_vol(cube) result(min_vol)
+        integer, intent(in)  :: cube(3, 3, 3)
+        integer              :: i, j, k, n, d, vol, min_vol
+        integer              :: holes(0:4, 0:4, 0:4), q(3, 27), p(3), t(3)
+
+        holes = -1 ! Create a border around holes.
+        holes(1:3, 1:3, 1:3) = cube
+        min_vol = huge(1)
+        do i = 1, 3
+        do j = 1, 3
+        do k = 1, 3
+            if (holes(i, j, k) /= 0) then
+                cycle
+            end if
+            ! Found a hole, see how large it is.
+            holes(i, j, k) = 1
+            vol = 0
+            n = 1
+            q(:, n) = (/ i, j, k /)
+            do
+                p = q(:, n)
+                n = n - 1
+                vol = vol + 1
+                do d = 1, 3
+                    t = p + eye(:, d)
+                    if (holes(t(1), t(2), t(3)) == 0) then
+                        holes(t(1), t(2), t(3)) = 1
+                        n = n + 1
+                        q(:, n) = t
+                    end if
+                    t = p - eye(:, d)
+                    if (holes(t(1), t(2), t(3)) == 0) then
+                        holes(t(1), t(2), t(3)) = 1
+                        n = n + 1
+                        q(:, n) = t
+                    end if
+                end do
+                if (n == 0) exit
+            end do
+            if (vol < min_vol) min_vol = vol
+        end do
+        end do
+        end do
+    end function
+
     recursive subroutine search(ps, n, cube, sols)
         type(piece), intent(in)   :: ps(:)
         integer, intent(in)       :: n, cube(3, 3, 3)
@@ -208,7 +259,9 @@ contains
             return
         end if
 
-        ! TODO Remove searchs with tiny islands.
+        if (elim_islands) then
+            if (min_island_vol(cube) < size(ps(1)%s, 2)) return
+        end if
 
         ! Skip all rotations for the first piece (they are redundant).
         if (n == size(ps)) then
@@ -262,12 +315,12 @@ contains
     end subroutine
 
     subroutine print_cube(c)
-        integer, intent(in) :: c(3, 3, 3)
+        integer, intent(in) :: c(:, :, :)
         integer             :: i, j
 
         do j = 1, 3
             do i = 1, 3
-                write (*, "(3i2)") c(i, :, j)
+                write (*, "(3i2)") c(i, 1:3, j)
             end do
             print *
         end do
