@@ -25,14 +25,14 @@ program cubes
     type(piece), allocatable :: ps(:)
     type(list)               :: sols
 
-    cube = 0
     call init_mrot(mrot)
+    cube = 0
     call read_pieces(ps)
-    call print_pieces(ps)
     sols%length = 0
     allocate(sols%d(3, 3, 3, 128))
 
     call search(ps, size(ps), cube, sols)
+
     write (*, "(a, i6)") "Solutions: ", sols%length
     call print_cubes(sols)
 
@@ -217,13 +217,23 @@ contains
                      rots%d(0, 0, 0, 0))
             rots%s(:, :, 1) = push_to_one(ps(n)%s)
             puts = all_puts(cube, rots, n)
-            print *, "Number of first puts: ", puts%length
         else
             rots = all_rots(ps(n)%s)
             puts = all_puts(cube, rots, n)
         end if
         do i = 1, puts%length
             call search(ps, n - 1, puts%d(:, :, :, i), sols)
+        end do
+    end subroutine
+
+    subroutine print_piece(p)
+        integer, intent(in) :: p(:, :)
+        integer             :: i
+        character(len=20)   :: f_str
+
+        write (f_str, "(a, i3, a)") "(", size(p, 2), "i2)"
+        do i = 1, 3
+            write (*, f_str) p(i, :)
         end do
     end subroutine
 
@@ -246,6 +256,8 @@ contains
             do i = 1, 3
                 read *, ps(j)%s(i, :)
             end do
+            call print_piece(ps(j)%s)
+            print *
         end do
     end subroutine
 
@@ -269,20 +281,6 @@ contains
             print *
             call print_cube(cs%d(:, :, :, i))
             print *, "********************************"
-        end do
-    end subroutine
-
-    subroutine print_pieces(ps)
-        type(piece), intent(in) :: ps(:)
-        integer                 :: i, j
-        character(len=20)       :: f_str
-
-        do i = 1, size(ps)
-            write (f_str, "(a, i3, a)") "(", size(ps(i)%s, 2), "i2)"
-            do j = 1, 3
-                write (*, f_str) ps(i)%s(j, :)
-            end do
-            print *
         end do
     end subroutine
 end program
