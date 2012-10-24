@@ -33,7 +33,7 @@ program cubes
     allocate(sols%d(3, 3, 3, 128))
 
     call search(ps, size(ps), cube, sols)
-    print *, "Solutions: ", sols%length
+    write (*, "(a, i6)") "Solutions: ", sols%length
     call print_cubes(sols)
 
 contains
@@ -162,16 +162,14 @@ contains
     end subroutine
 
     function all_puts(cube, ps, id) result(cubes)
-        integer, intent(in)                   :: cube(3, 3, 3), id
-        type(list), intent(in)                :: ps
-        type(list)                            :: cubes
-        integer                               :: i, x, y, z, rmax(3)
-        integer, dimension(3, size(ps%s, 2))  :: p, px, py, pz
-        integer                               :: c1(3, 3, 3)
-        logical                               :: ok
+        integer, intent(in)                  :: cube(3, 3, 3), id
+        type(list), intent(in)               :: ps
+        type(list)                           :: cubes
+        integer                              :: i, x, y, z, rmax(3), c1(3, 3, 3)
+        integer, dimension(3, size(ps%s, 2)) :: p, px, py, pz
+        logical                              :: ok
 
         cubes%length = 0
-        !allocate(cubes%s(size(piece, 1), size(piece, 2), 3**3)) !FIXME
         allocate(cubes%d(3, 3, 3, ps%length * 3**3))
 
         do i = 1, ps%length
@@ -189,7 +187,6 @@ contains
                         call place(cube, pz, id, c1, ok)
                         if (ok) then
                             cubes%length = cubes%length + 1
-                            !cubes%s(:, :, cubes%length) = pz
                             cubes%d(:, :, :, cubes%length) = c1
                         end if
                     end do
@@ -212,18 +209,19 @@ contains
         end if
 
         ! TODO Remove searchs with tiny islands.
+
         ! Skip all rotations for the first piece (they are redundant).
         if (n == size(ps)) then
             rots%length = 1
             allocate(rots%s(size(ps(n)%s, 1), size(ps(n)%s, 2), 1), &
                      rots%d(0, 0, 0, 0))
-            rots%s(:, :, 1) = ps(n)%s
+            rots%s(:, :, 1) = push_to_one(ps(n)%s)
             puts = all_puts(cube, rots, n)
+            print *, "Number of first puts: ", puts%length
         else
             rots = all_rots(ps(n)%s)
             puts = all_puts(cube, rots, n)
         end if
-        ! TODO Remove puts that are rotations of each other.
         do i = 1, puts%length
             call search(ps, n - 1, puts%d(:, :, :, i), sols)
         end do
@@ -251,19 +249,25 @@ contains
         end do
     end subroutine
 
+    subroutine print_cube(c)
+        integer, intent(in) :: c(3, 3, 3)
+        integer             :: i, j
+
+        do j = 1, 3
+            do i = 1, 3
+                write (*, "(3i2)") c(i, :, j)
+            end do
+            print *
+        end do
+    end subroutine
+
     subroutine print_cubes(cs)
         type(list), intent(in) :: cs
-        integer                :: ubounds(3)
-        integer                :: ii, i, k
-        character(len=20)      :: f_str
+        integer                :: i
 
-        do ii = 1, cs%length
-            do k = 1, 3
-                do i = 1, 3
-                    write (*, "(3i2)") cs%d(i, :, k, ii)
-                end do
-                print *
-            end do
+        do i = 1, cs%length
+            print *
+            call print_cube(cs%d(:, :, :, i))
             print *, "********************************"
         end do
     end subroutine
