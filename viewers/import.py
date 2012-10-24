@@ -3,6 +3,9 @@
 # Copyright 2012 David Campbell.
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
+#
+# This a script for importing a cube solution in the form of an OBJ file into
+# blender.
 
 import bpy
 import os
