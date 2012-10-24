@@ -2,7 +2,11 @@ Cubes
 ======
 
 Applications for determining how to put a cube together and for creating
-visualizations of the solution.
+visualizations of the solution.  Currently, only the Go version generates OBJ
+files for use with the viewers; however, the Fortran version is around a
+hundred times faster.
+
+![Minotaur Cube](https://github.com/davekong/cubes/raw/master/cube.png "One of two minotaur cube solutions")
 
 Directories
 -----------
@@ -19,9 +23,4 @@ Directories
 * puzzles: Puzzles to solve written in a plain text format.
 
 * viewers: A python script for importing solutions to blender and C code for
-  rendering a an interactive 3-D visualization of a solution.
-
-Currently, only the Go version generates OBJ files for use with the viewers;
-however, the Fortran version is around a hundred times faster.
-
-![Minotaur Cube](https://github.com/davekong/cubes/raw/master/cube.png "One of two minotaur cube solutions")
+  rendering an interactive 3-D visualization of a solution.
