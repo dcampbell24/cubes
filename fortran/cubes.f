@@ -7,6 +7,10 @@ module list_module
         integer, allocatable :: s(:, :)
     end type
 
+    type puts_t
+        integer, allocatable :: d(:, :, :, :)
+    end type
+
     type list
         integer              :: length
         integer, allocatable :: s(:, :, :)    ! sparse
@@ -19,18 +23,21 @@ program cubes
     use list_module
     implicit none
 
-    logical, parameter       :: elim_islands = .true.
-    integer, parameter       :: isin(0:3) = (/ 0, 1,  0, -1 /), &
-                                icos(0:3) = (/ 1, 0, -1,  0 /)
-    integer, parameter       :: eye(3, 3) = reshape((/ 1, 0, 0,       &
-                                                       0, 1, 0,       &
-                                                       0, 0, 1 /),    &
-                                                    (/ 3, 3 /))
-    integer                  :: mrot(3, 3, 3, 4), cube(3, 3, 3)
-    type(list), allocatable  :: rots_cache(:)
-    type(piece), allocatable :: ps(:)
-    type(list)               :: sols
+    logical, parameter        :: elim_islands = .true.
+    integer, parameter        :: isin(0:3) = (/ 0, 1,  0, -1 /),    &
+                                 icos(0:3) = (/ 1, 0, -1,  0 /)
+    integer, parameter        :: eye(3, 3) = reshape((/ 1, 0, 0,    &
+                                                        0, 1, 0,    &
+                                                        0, 0, 1 /), &
+                                                     (/ 3, 3 /))
+    integer                   :: mrot(3, 3, 3, 4), cube(3, 3, 3)
+    type(puts_t), allocatable :: puts_cache(:)
+    type(piece), allocatable  :: ps(:)
+    type(list)                :: sols
+    real                      :: t0, t1
 
+
+    call cpu_time(t0)
     call init_mrot(mrot)
     cube = 0
     call read_pieces(ps)
@@ -38,8 +45,10 @@ program cubes
     allocate(sols%d(3, 3, 3, 128))
 
     call search(ps, size(ps), cube, sols)
+    call cpu_time(t1)
 
     write (*, "(a, i6)") "Solutions: ", sols%length
+    print '("Search time: ",f12.6," seconds.")', t1 - t0
     call print_cubes(sols)
 
 contains
@@ -86,14 +95,14 @@ contains
         end forall
     end function
 
-    pure function sparse_to_dense(p1) result(p2)
-        integer, intent(in) :: p1(:, :)
+    pure function sparse_to_dense(p1, id) result(p2)
+        integer, intent(in) :: p1(:, :), id
         integer             :: i
         integer             :: p2(3, 3, 3)
 
         p2 = 0
         forall (i = 1:size(p1, 2))
-            p2(p1(1, i), p1(2, i), p1(3, i)) = 1
+            p2(p1(1, i), p1(2, i), p1(3, i)) = id
         end forall
     end function
 
@@ -115,7 +124,6 @@ contains
         b = .false.
     end function
 
-    ! Non-parallel version.
     pure function all_rots(p) result(ps)
         integer, intent(in) :: p(:, :)
         integer             :: p1(size(p, 1), size(p, 2))
@@ -132,7 +140,7 @@ contains
             do j = 0, 3
                 do k = 0, 3
                     p1 = push_to_one(p1)
-                    d = sparse_to_dense(p1)
+                    d = sparse_to_dense(p1, 1)
                     if (.not.contains_p(ps, p1)) then
                         ps%length = ps%length + 1
                         ps%s(:, :, ps%length) = p1
@@ -146,36 +154,17 @@ contains
         end do
     end function
 
-    subroutine place(c1, p, id, c2, ok)
-        integer, intent(in)  :: c1(3, 3, 3), p(:, :), id
-        integer, intent(out) :: c2(3, 3, 3)
-        logical, intent(out) :: ok
-        integer              :: i, x, y, z
-
-        c2 = c1
-        do i = 1, size(p, 2)
-            x = p(1, i)
-            y = p(2, i)
-            z = p(3, i)
-            if (c1(x, y, z) /= 0) then
-                ok = .false.
-                return
-            end if
-            c2(x, y, z) = id
-        end do
-        ok = .true.
-    end subroutine
-
-    function all_puts(cube, ps, id) result(cubes)
-        integer, intent(in)                  :: cube(3, 3, 3), id
+    pure function all_puts(ps, id) result(cubes)
+        integer, intent(in)                  :: id
         type(list), intent(in)               :: ps
-        type(list)                           :: cubes
-        integer                              :: i, x, y, z, rmax(3), c1(3, 3, 3)
+        integer, allocatable                 :: cubes(:, :, :, :)
+        integer                              :: i, n, x, y, z, rmax(3)
         integer, dimension(3, size(ps%s, 2)) :: p, px, py, pz
-        logical                              :: ok
 
-        cubes%length = 0
-        allocate(cubes%d(3, 3, 3, ps%length * 3**3))
+        p = ps%s(:, :, 1)
+        rmax = maxval(p, 2)
+        allocate(cubes(3, 3, 3, ps%length * (4 - rmax(1)) * (4 - rmax(2)) * (4 - rmax(3))))
+        n = 0
 
         do i = 1, ps%length
             p = ps%s(:, :, i)
@@ -187,16 +176,30 @@ contains
                     py = px
                     py(2, :) = py(2, :) + y
                     do z = 0, 3 - rmax(3)
+                        n = n + 1
                         pz = py
                         pz(3, :) = pz(3, :) + z
-                        call place(cube, pz, id, c1, ok)
-                        if (ok) then
-                            cubes%length = cubes%length + 1
-                            cubes%d(:, :, :, cubes%length) = c1
-                        end if
+                        cubes(:, :, :, n) = sparse_to_dense(pz, id)
                     end do
                 end do
             end do
+        end do
+    end function
+
+    function fast_puts(cube, ps, id) result(cubes)
+        integer, intent(in)                  :: cube(3, 3, 3), ps(:, :, :, :), id
+        type(list)                           :: cubes
+        integer                              :: i
+
+        cubes%length = 0
+        allocate(cubes%d(3, 3, 3, size(ps, 4)))
+
+        do i = 1, size(ps, 4)
+            if (all(ps(:, :, :, i) == 0 .or. cube == 0)) then
+                cubes%length = cubes%length + 1
+                cubes%d(:, :, :, cubes%length) = cube
+                where (ps(:, :, :, i) /= 0) cubes%d(:, :, :, cubes%length) = id
+            end if
         end do
     end function
 
@@ -265,10 +268,11 @@ contains
 
         ! This is the first piece.
         if (n == size(ps)) then
-            ! Cache all of the other pieces' rotations.
-            allocate(rots_cache(n - 1))
+            ! Cache all of the other pieces' potential placements including
+            ! rotations.
+            allocate(puts_cache(n - 1))
             forall (i = 1 : n - 1)
-                rots_cache(i) = all_rots(ps(i)%s)
+                puts_cache(i)%d = all_puts(all_rots(ps(i)%s), i)
             end forall
 
             ! Skip all of this piece's rotations (they are redundant).
@@ -276,9 +280,11 @@ contains
             allocate(rots%s(size(ps(n)%s, 1), size(ps(n)%s, 2), 1), &
                      rots%d(0, 0, 0, 0))
             rots%s(:, :, 1) = push_to_one(ps(n)%s)
-            puts = all_puts(cube, rots, n)
+
+            puts%d = all_puts(rots, n)
+            puts%length = size(puts%d, 4)
         else
-            puts = all_puts(cube, rots_cache(n), n)
+            puts = fast_puts(cube, puts_cache(n)%d, n)
         end if
         do i = 1, puts%length
             call search(ps, n - 1, puts%d(:, :, :, i), sols)

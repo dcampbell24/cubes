@@ -4,7 +4,7 @@ Cubes
 Applications for determining how to put a cube together and for creating
 visualizations of the solution.  Currently, only the Go version generates OBJ
 files for use with the viewers; however, the Fortran version is around a
-hundred times faster.
+thousand times faster.
 
 ![Minotaur Cube](https://github.com/davekong/cubes/raw/master/cube.png "One of two minotaur cube solutions")
 
