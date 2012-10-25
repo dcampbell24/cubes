@@ -27,6 +27,7 @@ program cubes
                                                        0, 0, 1 /),    &
                                                     (/ 3, 3 /))
     integer                  :: mrot(3, 3, 3, 4), cube(3, 3, 3)
+    type(list), allocatable  :: rots_cache(:)
     type(piece), allocatable :: ps(:)
     type(list)               :: sols
 
@@ -63,8 +64,7 @@ contains
         end forall
     end subroutine
 
-    ! Do we need to make a copy?
-    function rotate(p1, axis, theta) result(p2)
+    pure function rotate(p1, axis, theta) result(p2)
         integer, intent(in) :: p1(:, :), axis, theta
         integer             :: p2(size(p1, 1), size(p1, 2))
 
@@ -75,7 +75,7 @@ contains
         end if
     end function
 
-    function push_to_one(p1) result(p2)
+    pure function push_to_one(p1) result(p2)
         integer, intent(in) :: p1(:, :)
         integer             :: p2(size(p1, 1), size(p1, 2))
         integer             :: i, col_mins(3)
@@ -86,7 +86,7 @@ contains
         end forall
     end function
 
-    function sparse_to_dense(p1) result(p2)
+    pure function sparse_to_dense(p1) result(p2)
         integer, intent(in) :: p1(:, :)
         integer             :: i
         integer             :: p2(3, 3, 3)
@@ -97,7 +97,7 @@ contains
         end forall
     end function
 
-    function contains_p (ps, p) result(b)
+    pure function contains_p (ps, p) result(b)
         type(list), intent(in) :: ps
         integer, intent(in)    :: p(:, :)
         logical                :: b
@@ -116,7 +116,7 @@ contains
     end function
 
     ! Non-parallel version.
-    function all_rots(p) result(ps)
+    pure function all_rots(p) result(ps)
         integer, intent(in) :: p(:, :)
         integer             :: p1(size(p, 1), size(p, 2))
         integer             :: d(3, 3, 3)
@@ -263,16 +263,22 @@ contains
             if (min_island_vol(cube) < size(ps(1)%s, 2)) return
         end if
 
-        ! Skip all rotations for the first piece (they are redundant).
+        ! This is the first piece.
         if (n == size(ps)) then
+            ! Cache all of the other pieces' rotations.
+            allocate(rots_cache(n - 1))
+            forall (i = 1 : n - 1)
+                rots_cache(i) = all_rots(ps(i)%s)
+            end forall
+
+            ! Skip all of this piece's rotations (they are redundant).
             rots%length = 1
             allocate(rots%s(size(ps(n)%s, 1), size(ps(n)%s, 2), 1), &
                      rots%d(0, 0, 0, 0))
             rots%s(:, :, 1) = push_to_one(ps(n)%s)
             puts = all_puts(cube, rots, n)
         else
-            rots = all_rots(ps(n)%s)
-            puts = all_puts(cube, rots, n)
+            puts = all_puts(cube, rots_cache(n), n)
         end if
         do i = 1, puts%length
             call search(ps, n - 1, puts%d(:, :, :, i), sols)
