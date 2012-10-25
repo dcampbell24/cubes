@@ -30,12 +30,11 @@ program cubes
                                                         0, 1, 0,    &
                                                         0, 0, 1 /), &
                                                      (/ 3, 3 /))
-    integer                   :: mrot(3, 3, 3, 4), cube(3, 3, 3)
+    integer                   :: mrot(3, 3, 3, 4), cube(3, 3, 3), calls
     type(puts_t), allocatable :: puts_cache(:)
     type(piece), allocatable  :: ps(:)
     type(list)                :: sols
     real                      :: t0, t1
-
 
     call cpu_time(t0)
     call init_mrot(mrot)
@@ -44,11 +43,13 @@ program cubes
     sols%length = 0
     allocate(sols%d(3, 3, 3, 128))
 
+    calls = 1
     call search(ps, size(ps), cube, sols)
     call cpu_time(t1)
 
-    write (*, "(a, i6)") "Solutions: ", sols%length
-    print '("Search time: ",f12.6," seconds.")', t1 - t0
+    print '("Solutions:       ", i12)', sols%length
+    print '("Calls of search: ", i12)', calls
+    print '("Search time(s):  ", f12.3)', t1 - t0
     call print_cubes(sols)
 
 contains
@@ -287,6 +288,7 @@ contains
             puts = fast_puts(cube, puts_cache(n)%d, n)
         end if
         do i = 1, puts%length
+            calls = calls + 1
             call search(ps, n - 1, puts%d(:, :, :, i), sols)
         end do
     end subroutine
