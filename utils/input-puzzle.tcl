@@ -47,7 +47,7 @@ proc saveps {} {
 	set out [open "[string tolower $::pname].txt" w 0644]
 	puts $out $::pname
 	puts $out "[llength $::ps]\n"
-	foreach p $::ps {
+	foreach p [lsort -dictionary $::ps] {
 		puts $out $p
 	}
 	flush $out
