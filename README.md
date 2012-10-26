@@ -22,5 +22,6 @@ Directories
 
 * puzzles: Puzzles to solve written in a plain text format.
 
-* viewers: A python script for importing solutions to blender and C code for
-  rendering an interactive 3-D visualization of a solution.
+* utils: A python script for importing solutions to blender, C code for
+  rendering an interactive 3-D visualization of a solution, and a tcl script
+  for creating a puzzle file.
