@@ -1,6 +1,6 @@
 package require Tk
 
-set pname ""  ;# Name of the piece
+set pname ""  ;# Name of the puzzle
 set ps [list] ;# List of all the pieces
 
 wm title . "Cube Puzzle Maker"
