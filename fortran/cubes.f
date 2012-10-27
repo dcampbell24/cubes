@@ -41,7 +41,7 @@ program cubes
     cube = 0
     call read_pieces(ps)
     sols%length = 0
-    allocate(sols%d(3, 3, 3, 128))
+    allocate(sols%d(3, 3, 3, 16))
 
     calls = 1
     call search(ps, size(ps), cube, sols)
@@ -259,7 +259,9 @@ contains
 
         if (n == 0) then
             sols%length = sols%length + 1
-            sols%d(:, :, :, sols%length) = cube
+            if (sols%length <= size(sols%d, 4)) then
+                sols%d(:, :, :, sols%length) = cube
+            end if
             return
         end if
 
@@ -344,7 +346,7 @@ contains
         type(list), intent(in) :: cs
         integer                :: i
 
-        do i = 1, cs%length
+        do i = 1, min(cs%length, size(cs%d, 4))
             print *
             call print_cube(cs%d(:, :, :, i))
             print *, "********************************"
