@@ -24,6 +24,7 @@ program cubes
     implicit none
 
     logical, parameter        :: elim_islands = .true.
+    logical, parameter        :: one_sol = .true.
     integer, parameter        :: isin(0:3) = (/ 0, 1,  0, -1 /),    &
                                  icos(0:3) = (/ 1, 0, -1,  0 /)
     integer, parameter        :: eye(3, 3) = reshape((/ 1, 0, 0,    &
@@ -45,12 +46,7 @@ program cubes
 
     calls = 1
     call search(ps, size(ps), cube, sols)
-    call cpu_time(t1)
-
-    print '("Solutions:       ", i12)', sols%length
-    print '("Calls of search: ", i12)', calls
-    print '("Search time(s):  ", f12.3)', t1 - t0
-    call print_cubes(sols)
+    call finish()
 
 contains
     subroutine init_mrot(mrot)
@@ -262,6 +258,10 @@ contains
             if (sols%length <= size(sols%d, 4)) then
                 sols%d(:, :, :, sols%length) = cube
             end if
+            if (one_sol) then
+                call finish()
+                stop
+            end if
             return
         end if
 
@@ -351,5 +351,13 @@ contains
             call print_cube(cs%d(:, :, :, i))
             print *, "********************************"
         end do
+    end subroutine
+
+    subroutine finish()
+        call cpu_time(t1)
+        print '("Solutions:       ", i12)', sols%length
+        print '("Calls of search: ", i12)', calls
+        print '("Search time(s):  ", f12.3)', t1 - t0
+        call print_cubes(sols)
     end subroutine
 end program
