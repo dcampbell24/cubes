@@ -4,6 +4,7 @@
 
 module list_module
     type piece
+        integer              :: cnt
         integer, allocatable :: s(:, :)
     end type
 
@@ -45,7 +46,7 @@ program cubes
     allocate(sols%d(3, 3, 3, 16))
 
     calls = 1
-    call search(ps, size(ps), cube, sols)
+    call search(ps, size(ps), 1, cube, sols)
     call finish()
 
 contains
@@ -246,12 +247,12 @@ contains
         end do
     end function
 
-    recursive subroutine search(ps, n, cube, sols)
+    recursive subroutine search(ps, n, k, cube, sols)
         type(piece), intent(in)   :: ps(:)
-        integer, intent(in)       :: n, cube(3, 3, 3)
+        integer, intent(in)       :: n, k, cube(3, 3, 3)
         type(list), intent(inout) :: sols
         type(list)                :: rots, puts
-        integer                   :: i
+        integer                   :: i, id
 
         if (n == 0) then
             sols%length = sols%length + 1
@@ -270,11 +271,13 @@ contains
         end if
 
         ! This is the first piece.
-        if (n == size(ps)) then
-            ! Cache all of the other pieces' potential placements including
-            ! rotations.
-            allocate(puts_cache(n - 1))
-            forall (i = 1 : n - 1)
+        !! Potentially doing a little wasted work with the first piece to simplify the code.
+        id = n*10 + k
+        if (n == size(ps) .and. k == 1) then
+            ! Cache all of the pieces' potential placements including
+            ! rotations (this can used to estimate the branching factors).
+            allocate(puts_cache(n))
+            forall (i = 1:n)
                 puts_cache(i)%d = all_puts(all_rots(ps(i)%s), i)
             end forall
 
@@ -284,14 +287,19 @@ contains
                      rots%d(0, 0, 0, 0))
             rots%s(:, :, 1) = push_to_one(ps(n)%s)
 
-            puts%d = all_puts(rots, n)
+            puts%d = all_puts(rots, id)
             puts%length = size(puts%d, 4)
         else
-            puts = fast_puts(cube, puts_cache(n)%d, n)
+            puts = fast_puts(cube, puts_cache(n)%d, id)
         end if
+
         do i = 1, puts%length
             calls = calls + 1
-            call search(ps, n - 1, puts%d(:, :, :, i), sols)
+            if (k < ps(n)%cnt) then
+                call search(ps, n, k + 1, puts%d(:, :, :, i), sols)
+            else
+                call search(ps, n - 1, 1, puts%d(:, :, :, i), sols)
+            end if
         end do
     end subroutine
 
@@ -309,18 +317,19 @@ contains
     subroutine read_pieces(ps)
         type(piece), allocatable, intent(inout) :: ps(:)
         character(len=20)                       :: name_
-        integer                                 :: n, w, i, j
+        integer                                 :: n, w, i, j, cnt
 
         read *, name_
         write (*, "(a, a)") "Reading in ", name_
 
         read *, n
-        write (*, "(a, i3)") "pieces count: ", n
+        write (*, "(a, i3)") "unique pieces: ", n
         allocate(ps(n))
 
         do j = 1, n
-            read *, w
-            write (*, "(a, i2, a, i2)") "piece ", j, ", volume ", w
+            read *, w, cnt
+            write (*, "(a, i2, a, i2, a, i2)") "piece ", j, ", volume ", w, ", count ", cnt
+            ps(j)%cnt = cnt
             allocate(ps(j)%s(3, w))
             do i = 1, 3
                 read *, ps(j)%s(i, :)
@@ -328,6 +337,8 @@ contains
             call print_piece(ps(j)%s)
             print *
         end do
+        write (*, "(a, i3)") "total pieces: ", sum(ps%cnt)
+        print *
     end subroutine
 
     subroutine print_cube(c)
@@ -336,7 +347,7 @@ contains
 
         do j = 1, 3
             do i = 1, 3
-                write (*, "(3i2)") c(i, 1:3, j)
+                write (*, "(3i3)") c(i, 1:3, j)
             end do
             print *
         end do

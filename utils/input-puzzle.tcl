@@ -1,6 +1,7 @@
 package require Tk
 
 set pname ""  ;# Name of the puzzle
+set pcnt 1    ;# piece count
 set ps [list] ;# List of all the pieces
 
 wm title . "Cube Puzzle Maker"
@@ -22,10 +23,12 @@ for {set i 1} {$i < 4} {incr i} {
 	}
 }
 
-grid [ttk::label .c.lblname -text "Puzzle Name"]                 -row 1 -column 4
-grid [ttk::entry .c.name -textvariable pname]                    -row 2 -column 4
-grid [ttk::button .c.addp -text "Add Piece" -command addp]       -row 3 -column 4
-grid [ttk::button .c.saveps -text "Save Pieces" -command saveps] -row 4 -column 4
+grid [ttk::label  .c.lblname -text "Puzzle Name"]                -row 1 -column 4
+grid [ttk::entry  .c.name -textvariable pname]                   -row 2 -column 4
+grid [ttk::label  .c.lblpcnt -text "Piece Count"]                -row 3 -column 4
+grid [ttk::entry  .c.pcnt -textvariable pcnt]                    -row 4 -column 4
+grid [ttk::button .c.addp -text "Add Piece" -command addp]       -row 5 -column 4
+grid [ttk::button .c.saveps -text "Save Pieces" -command saveps] -row 6 -column 4
 grid [ttk::button .c.quit -text "Quit" -command {exit}]          -row 8 -column 4
 
 proc addp {} {
@@ -43,7 +46,7 @@ proc addp {} {
 			}
 		}
 	}
-	lappend ::ps "[llength $xs]\n$xs\n$ys\n$zs\n"
+	lappend ::ps "[llength $xs] $::pcnt\n$xs\n$ys\n$zs\n"
 }
 
 proc saveps {} {
