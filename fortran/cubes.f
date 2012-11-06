@@ -54,7 +54,7 @@ contains
         integer, intent(inout) :: mrot(3, 3, 3, 4)
         integer                :: theta ! In 90 degree increments
 
-        forall (theta = 1:3)
+        do theta = 1, 3
             mrot(:, :, :, theta) =                                &
                 reshape((/ 1,           0,             0,         &
                            0, icos(theta),  -isin(theta),         &
@@ -68,7 +68,7 @@ contains
                            isin(theta),   icos(theta),      0,    &
                                      0,             0,      1 /), &
                         (/ 3, 3, 3 /))
-        end forall
+        end do
     end subroutine
 
     pure function rotate(p1, axis, theta) result(p2)
@@ -88,9 +88,9 @@ contains
         integer             :: i, col_mins(3)
 
         col_mins = minval(p1, 2)
-        forall (i = 1:size(p1, 2))
+        do i = 1, size(p1, 2)
             p2(:, i) = p1(:, i) - col_mins + 1
-        end forall
+        end do
     end function
 
     pure function sparse_to_dense(p1, id) result(p2)
@@ -99,9 +99,9 @@ contains
         integer             :: p2(3, 3, 3)
 
         p2 = 0
-        forall (i = 1:size(p1, 2))
+        do i = 1, size(p1, 2)
             p2(p1(1, i), p1(2, i), p1(3, i)) = id
-        end forall
+        end do
     end function
 
     pure function contains_p (ps, p) result(b)
@@ -277,9 +277,9 @@ contains
             ! Cache all of the pieces' potential placements including
             ! rotations (this can used to estimate the branching factors).
             allocate(puts_cache(n))
-            forall (i = 1:n)
+            do i = 1, n
                 puts_cache(i)%d = all_puts(all_rots(ps(i)%s), i)
-            end forall
+            end do
 
             ! Skip all of this piece's rotations (they are redundant).
             rots%length = 1
