@@ -24,8 +24,17 @@ program cubes
     use list_module
     implicit none
 
-    logical, parameter        :: elim_islands = .true.
-    logical, parameter        :: one_sol = .true.
+    type puzzle
+        character(len=20)        :: name_
+        type(piece), allocatable :: ps(:)
+    end type
+
+    ! Command line arguments
+    character(len=80)         :: cmd
+    logical                   :: elim_islands = .true.
+    logical                   :: one_sol      = .true.
+    logical                   :: script_mode  = .false.
+
     integer, parameter        :: isin(0:3) = (/ 0, 1,  0, -1 /),    &
                                  icos(0:3) = (/ 1, 0, -1,  0 /)
     integer, parameter        :: eye(3, 3) = reshape((/ 1, 0, 0,    &
@@ -34,19 +43,26 @@ program cubes
                                                      (/ 3, 3 /))
     integer                   :: mrot(3, 3, 3, 4), cube(3, 3, 3), calls
     type(puts_t), allocatable :: puts_cache(:)
-    type(piece), allocatable  :: ps(:)
     type(list)                :: sols
     real                      :: t0, t1
+    type(puzzle)              :: puzz
+
+    ! Parse command line.
+    call get_command(cmd)
+    elim_islands = (index(cmd, '--no-elim-islands') == 0)
+    one_sol      = (index(cmd, '--many-sols') == 0)
+    script_mode  = (index(cmd, '--script-mode') /= 0)
 
     call cpu_time(t0)
     call init_mrot(mrot)
     cube = 0
-    call read_pieces(ps)
+    call read_puzzle(puzz)
+    if (.not.script_mode) call print_puzzle(puzz)
     sols%length = 0
     allocate(sols%d(3, 3, 3, 16))
 
     calls = 1
-    call search(ps, size(ps), 1, cube, sols)
+    call search(puzz%ps, size(puzz%ps), 1, cube, sols)
     call finish()
 
 contains
@@ -303,6 +319,23 @@ contains
         end do
     end subroutine
 
+    subroutine read_puzzle(puzz)
+        type(puzzle), intent(out) :: puzz
+        integer                   :: n, w, i, j
+
+        read *, puzz%name_
+        read *, n
+        allocate(puzz%ps(n))
+
+        do j = 1, n
+            read *, w, puzz%ps(j)%cnt
+            allocate(puzz%ps(j)%s(3, w))
+            do i = 1, 3
+                read *, puzz%ps(j)%s(i, :)
+            end do
+        end do
+    end subroutine
+
     subroutine print_piece(p)
         integer, intent(in) :: p(:, :)
         integer             :: i
@@ -314,30 +347,21 @@ contains
         end do
     end subroutine
 
-    subroutine read_pieces(ps)
-        type(piece), allocatable, intent(inout) :: ps(:)
-        character(len=20)                       :: name_
-        integer                                 :: n, w, i, j, cnt
+    subroutine print_puzzle(puzz)
+        type(puzzle), intent(in) :: puzz
+        type(piece)              :: p
+        integer                  :: i
 
-        read *, name_
-        write (*, "(a, a)") "Reading in ", name_
-
-        read *, n
-        write (*, "(a, i3)") "unique pieces: ", n
-        allocate(ps(n))
-
-        do j = 1, n
-            read *, w, cnt
-            write (*, "(a, i2, a, i2, a, i2)") "piece ", j, ", volume ", w, ", count ", cnt
-            ps(j)%cnt = cnt
-            allocate(ps(j)%s(3, w))
-            do i = 1, 3
-                read *, ps(j)%s(i, :)
-            end do
-            call print_piece(ps(j)%s)
+        write (*, "(a, a)")  "puzzle name: ", puzz%name_
+        write (*, "(a, i3)") "unique pieces: ", size(puzz%ps)
+        print *
+        do i = 1, size(puzz%ps)
+            p = puzz%ps(i)
+            write (*, "(a, i2, a, i2, a, i2)") "piece ", i, ", volume ", size(p%s, 2), ", count ", p%cnt
+            call print_piece(p%s)
             print *
         end do
-        write (*, "(a, i3)") "total pieces: ", sum(ps%cnt)
+        write (*, "(a, i3)") "total pieces: ", sum(puzz%ps%cnt)
         print *
     end subroutine
 
