@@ -1,0 +1,11 @@
+[package]
+name = "cubes"
+version = "0.1.0"
+authors = ["David Campbell <dcampbell24@gmail.com>"]
+
+[dependencies]
+cake = { git = "https://github.com/ticki/cake.git" }
+
+[[bin]]
+name = "cake"
+path = "cakefile.rs"
