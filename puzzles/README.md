@@ -2,7 +2,7 @@ Puzzles
 ========
 
 This directory contains data files in a format readable by the Fortran version
-of the cubes solver. All of the data is from other sources than the author of
+of the cubes solver. Most of the data is from sources other than the author of
 this code, but he needs to do some research to determine what they are.
 
 ```sh
