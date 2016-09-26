@@ -9,3 +9,7 @@ cake = { git = "https://github.com/ticki/cake.git" }
 [[bin]]
 name = "cake"
 path = "cakefile.rs"
+
+[[bin]]
+name = "cubes-rs"
+path = "src/main.rs"
