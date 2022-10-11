@@ -16,3 +16,6 @@ target/cubes-go:
 
 target/cubes-fortran:
 	gfortran -o target/cubes-fortran  fortran/cubes.f90 
+
+clean:
+	rm -f target/cubes-fortran target/cubes-go
