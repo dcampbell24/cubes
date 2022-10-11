@@ -1,3 +1,5 @@
+all: go-minotaur fortran-minotaur
+
 go-minotaur: target/cubes-go
 	target/cubes-go cubes-go/minotaur.json
 
