@@ -1,3 +1,5 @@
+.PHONY: all go-minotaur fortran-minotaur clean
+
 all: go-minotaur fortran-minotaur
 
 go-minotaur: target/cubes-go
