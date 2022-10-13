@@ -1,8 +1,0 @@
-[package]
-name = "cubes"
-version = "0.1.0"
-authors = ["David Campbell <dcampbell24@gmail.com>"]
-
-[[bin]]
-name = "cubes-rs"
-path = "src/main.rs"
