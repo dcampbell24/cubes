@@ -29,16 +29,13 @@ fn main() {
     window.set_light(Light::StickToCamera);
 
     let mut cubes = Vec::new();
-    //let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), -0.5);
     for i in 0..27 {
-        let c = window.add_cube(0.08, 0.08, 0.08);
+        let c = window.add_cube(0.09, 0.09, 0.09);
         cubes.push(c);
 
-        //cubes[i].append_rotation(&rot1);
-
-        let r = (i % 3) as f32 * 0.1;
-        let c = (i / 9) as f32 * 0.1;
-        let d = (i % 9) as f32 * 0.05;
+        let r = (i % 3) as f32 * 0.1 - 0.1;
+        let c = (i / 9) as f32 * 0.1 - 0.1;
+        let d = (i % 9) as f32 * 0.05 - 0.1;
         cubes[i].append_translation(&Translation { vector: vector!(r, c, d) });
     }
 
@@ -94,10 +91,21 @@ fn main() {
         }
     }
 
-    let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
-    while window.render() {
-        for i in 0..27 {
-            cubes[i].append_rotation(&rot);
+    let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), 0.01);
+    let rot2 = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.01);
+    
+    for _ in 0..1600 {
+        if window.render() {
+            for i in 0..27 {
+                cubes[i].append_rotation(&rot1);
+            }
+        }
+    }
+    for _ in 0..1600 {
+        if window.render() {
+            for i in 0..27 {
+                cubes[i].append_rotation(&rot2)
+            }
         }
     }
 }
