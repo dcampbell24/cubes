@@ -9,27 +9,40 @@ use na::{Translation, UnitQuaternion, Vector3};
 fn main() {
     env_logger::init();
     let mut window = Window::new("Kiss3d: cube");
-    let mut c = window.add_cube(0.1, 0.1, 0.1);
-
-    c.set_color(0.0, 1.0, 0.0);
-
     window.set_light(Light::StickToCamera);
 
-    let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
-
-    let rot_1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), -0.5);
-    c.append_rotation(&rot_1);
+    let mut cubes = Vec::new();
+    for _ in 0..27 {
+        let c = window.add_cube(0.08, 0.08, 0.08);
+        cubes.push(c);
+    }
     
-    //c.append_translation(&Translation{ vector: vector!(0.05, 0.05, 0.05) });
+    for i in 0..9 {
+        cubes[i].set_color(1., 0., 0.);
+    }
+    for i in 9..27 {
+        cubes[i].set_color(0., 1., 0.);
+    }
+    for i in 18..27 {
+        cubes[i].set_color(0., 0., 1.);
+    }
 
+    let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), -0.5);
+    for i in 0..27 {
+        cubes[i].append_rotation(&rot1);
+    }
 
-    let mut c2 = window.add_cube(0.1, 0.1, 0.1);
-    c2.set_color(0.0, 0.0, 1.0);
-    c2.append_translation(&Translation{ vector: vector!(0.1, 0.1, 0.1) });
-    c2.append_rotation(&rot_1);
+    for i in 0..27 {
+        let r = (i % 3) as f32 * 0.1;
+        let c = (i / 9) as f32 * 0.1;
+        let d = (i % 9) as f32 * 0.05;
+        cubes[i].append_translation(&Translation { vector: vector!(r, c, d) });
+    }
 
+    let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
     while window.render() {
-        c.append_rotation(&rot);
-        c2.append_rotation(&rot);
+        for i in 0..27 {
+            cubes[i].append_rotation(&rot);
+        }
     }
 }
