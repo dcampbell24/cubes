@@ -1,13 +1,26 @@
+extern crate clap;
 extern crate kiss3d;
 extern crate nalgebra as na;
 
+use clap::Parser;
 use kiss3d::light::Light;
 use kiss3d::window::Window;
 use na::vector;
 use na::{Translation, UnitQuaternion, Vector3};
 
+/// Program to display a 3x3 cube solution.
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+   /// Solve the planes problem.
+   #[arg(short, long)]
+   planes: bool,
+}
+
 fn main() {
     env_logger::init();
+    let args = Args::parse();
+
     let mut window = Window::new("Kiss3d: cube");
     window.set_light(Light::StickToCamera);
 
@@ -25,14 +38,16 @@ fn main() {
         cubes[i].append_translation(&Translation { vector: vector!(r, c, d) });
     }
 
-    for i in 0..9 {
-        cubes[i].set_color(1., 0., 0.);
-    }
-    for i in 9..27 {
-        cubes[i].set_color(0., 1., 0.);
-    }
-    for i in 18..27 {
-        cubes[i].set_color(0., 0., 1.);
+    if args.planes {
+        for i in 0..9 {
+                cubes[i].set_color(1., 0., 0.);
+            }
+            for i in 9..27 {
+                cubes[i].set_color(0., 1., 0.);
+            }
+            for i in 18..27 {
+                cubes[i].set_color(0., 0., 1.);
+            }
     }
 
     let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
