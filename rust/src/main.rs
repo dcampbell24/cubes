@@ -12,6 +12,10 @@ use na::{Translation, UnitQuaternion, Vector3};
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
+   /// Solve the minotaur problem.
+   #[arg(short, long)]
+   minotaur: bool,
+
    /// Solve the planes problem.
    #[arg(short, long)]
    planes: bool,
@@ -25,17 +29,57 @@ fn main() {
     window.set_light(Light::StickToCamera);
 
     let mut cubes = Vec::new();
-    let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), -0.5);
+    //let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), -0.5);
     for i in 0..27 {
         let c = window.add_cube(0.08, 0.08, 0.08);
         cubes.push(c);
 
-        cubes[i].append_rotation(&rot1);
+        //cubes[i].append_rotation(&rot1);
 
         let r = (i % 3) as f32 * 0.1;
         let c = (i / 9) as f32 * 0.1;
         let d = (i % 9) as f32 * 0.05;
         cubes[i].append_translation(&Translation { vector: vector!(r, c, d) });
+    }
+
+    if args.minotaur {
+        cubes[0].set_color(1.0, 0.0, 0.0);
+        cubes[1].set_color(1.0, 0.0, 0.0);
+        cubes[2].set_color(1.0, 0.0, 0.0);
+
+        cubes[3].set_color(1.0, 0.0, 0.0);
+        cubes[4].set_color(0.0, 1.0, 0.0);
+        cubes[5].set_color(0.0, 0.0, 1.0);
+
+        cubes[6].set_color(0.0, 1.0, 0.0);
+        cubes[7].set_color(0.0, 1.0, 0.0);
+        cubes[8].set_color(0.0, 0.0, 1.0);
+
+
+        cubes[9].set_color(1.0, 1.0, 0.0);
+        cubes[10].set_color(1.0, 0.0, 0.0);
+        cubes[11].set_color(0.0, 1.0, 1.0);
+
+        cubes[12].set_color(1.0, 1.0, 0.0);
+        cubes[13].set_color(1.0, 1.0, 0.0);
+        cubes[14].set_color(0.0, 1.0, 1.0);
+
+        cubes[15].set_color(0.0, 1.0, 0.0);
+        cubes[16].set_color(0.0, 0.0, 1.0);
+        cubes[17].set_color(0.0, 0.0, 1.0);
+
+
+        cubes[18].set_color(1.0, 0.0, 1.0);
+        cubes[19].set_color(1.0, 0.0, 1.0);
+        cubes[20].set_color(1.0, 0.0, 1.0);
+
+        cubes[21].set_color(1.0, 1.0, 0.0);
+        cubes[22].set_color(1.0, 0.0, 1.0);
+        cubes[23].set_color(0.0, 1.0, 1.0);
+
+        cubes[24].set_color(1.0, 1.0, 0.0);
+        cubes[25].set_color(0.0, 1.0, 1.0);
+        cubes[26].set_color(0.0, 1.0, 1.0);
     }
 
     if args.planes {
