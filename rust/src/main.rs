@@ -40,14 +40,14 @@ fn main() {
 
     if args.planes {
         for i in 0..9 {
-                cubes[i].set_color(1., 0., 0.);
-            }
-            for i in 9..27 {
-                cubes[i].set_color(0., 1., 0.);
-            }
-            for i in 18..27 {
-                cubes[i].set_color(0., 0., 1.);
-            }
+            cubes[i].set_color(1., 0., 0.);
+        }
+        for i in 9..27 {
+            cubes[i].set_color(0., 1., 0.);
+        }
+        for i in 18..27 {
+            cubes[i].set_color(0., 0., 1.);
+        }
     }
 
     let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
