@@ -1,21 +1,94 @@
-type Puzzle = Vec<Vec<[i32; 3]>>;
-type PuzzleDense = [[[i32; 3]; 3]; 3];
+use std::fmt;
+
+type Piece = Vec<[i32; 3]>;
+type Puzzle = Vec<Piece>;
+
+#[derive(Clone, Debug)]
+struct PuzzleDense {
+    data: [[[i32; 3]; 3]; 3],
+}
+
+impl fmt::Display for PuzzleDense {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "{:?}", self.data[0])?;
+        writeln!(f, "{:?}", self.data[1])?;
+        writeln!(f, "{:?}", self.data[2])
+    }
+}
 
 fn main() {
 
     let puzzle = blue();
-    for piece in &puzzle {
-        println!("{:?}", piece);
-    }
-    println!("");
-
     let pieces = push_to_zero(puzzle);
-    for piece in pieces {
+    for piece in &pieces {
         for part in piece {
             println!("{:?}", part);
         }
         println!("");
     }
+    
+    let mut solutions = Vec::new();
+    solutions.push(PuzzleDense { data: zeros() });
+    
+    let piece = &pieces[0];
+    solutions = all_puts(solutions, 1, piece);
+    
+    let piece = &pieces[1];
+    solutions = all_puts(solutions, 2, piece);
+
+    for solution in solutions {
+        println!("{:}", solution);
+    }
+    
+}
+
+fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
+    let mut max_x = -1;
+    let mut max_y = -1;
+    let mut max_z = -1;
+
+    for [x, y, z] in piece {
+        if x > &max_x {
+            max_x = *x;
+        }
+        if y > &max_y{
+            max_y = *y;
+        }
+        if z > &max_z{
+            max_z = *z;
+        }
+    }
+    (max_x, max_y, max_z)
+}
+
+fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
+    let mut all_solutions = Vec::new();
+    let (max_x, max_y, max_z) = max_xyz(&piece);
+
+    for x_step in 0..3 - max_x {
+        for y_step in 0..3 - max_y {
+            for z_step in 0..3 - max_z {
+                let already_placed = already_placed.clone();
+                'next_piece:
+                for mut puzzle in already_placed {
+                    
+                    for [x, y, z] in piece {
+                        if puzzle.data[(x + x_step) as usize][(y + y_step) as usize][(z + z_step) as usize] > 0 {
+                            continue 'next_piece;
+                        }
+                    }
+                    
+                    for [x, y, z] in piece {
+                        puzzle.data[(x + x_step) as usize][(y + y_step) as usize][(z + z_step) as usize] = piece_count;
+                    }
+
+                    all_solutions.push(puzzle);                
+                }
+            }
+        }
+    }
+
+    all_solutions
 }
 
 fn zeros() -> [[[i32; 3]; 3]; 3] {
@@ -39,16 +112,15 @@ fn zeros() -> [[[i32; 3]; 3]; 3] {
     zeros
 }
 
-fn push_to_zero(puzzle: Puzzle) -> Vec<PuzzleDense> {
+fn push_to_zero(puzzle: Puzzle) -> Puzzle {
     let mut pieces = Vec::new();
-    for _ in 0..puzzle.len() {
-        pieces.push(zeros());
-    }
 
     for i in 0..puzzle.len() {
+        let mut piece = Vec::new();
         let mut min_x = 99;
         let mut min_y = 99;
         let mut min_z = 99;
+
         for [x, y, z] in &puzzle[i] {
             if x < &min_x {
                 min_x = *x;
@@ -61,9 +133,10 @@ fn push_to_zero(puzzle: Puzzle) -> Vec<PuzzleDense> {
             }
         }
         for [x, y, z] in &puzzle[i] {
-            pieces[i][(x - min_x) as usize][(y - min_y) as usize][(z - min_z) as usize] = (i + 1) as i32;
+            piece.push([x - min_x, y - min_y, z - min_z]);
         }
 
+        pieces.push(piece);
     }
 
     pieces
