@@ -1,7 +1,11 @@
 use std::fmt;
+use std::collections::HashSet;
 
 type Piece = Vec<[i32; 3]>;
 type Puzzle = Vec<Piece>;
+
+const SIN: [i32; 4] = [0, 1, 0, -1];
+const COS: [i32; 4] = [1, 0, -1, 0];
 
 #[derive(Clone, Debug)]
 struct PuzzleDense {
@@ -17,7 +21,6 @@ impl fmt::Display for PuzzleDense {
 }
 
 fn main() {
-
     let puzzle = blue();
     let pieces = push_to_zero(puzzle);
     for piece in &pieces {
@@ -27,19 +30,95 @@ fn main() {
         println!("");
     }
     
-    let mut solutions = Vec::new();
-    solutions.push(PuzzleDense { data: zeros() });
+    let mut zero = Vec::new();
+    zero.push(PuzzleDense { data: zeros() });
     
     let piece = &pieces[0];
-    solutions = all_puts(solutions, 1, piece);
     
-    let piece = &pieces[1];
-    solutions = all_puts(solutions, 2, piece);
+    let rots = all_rotations(piece);
+    for solution in &rots {
+        for part in solution {
+            println!("{:?}", part);
+        }
+        println!("");
+    }
+
+    let mut solutions = Vec::new();
+    for rot in rots {
+        for s in all_puts(zero.clone(), 1, &rot) {
+            solutions.push(s);
+        }
+    }
+    // solutions = all_puts(solutions, 1, piece);
+    
+    //let piece = &pieces[1];
+    //solutions = all_puts(solutions, 2, piece);
 
     for solution in solutions {
         println!("{:}", solution);
     }
     
+}
+
+fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
+    let mut all_rots = Vec::new();
+    for theta in 0..4 {
+        let mut rotations = Vec::new();
+        for [x, y, z] in piece {
+            let rotated_z = [
+                x*COS[theta] - y*SIN[theta],
+                x*SIN[theta] + y*COS[theta],
+                *z,
+            ];
+            rotations.push(rotated_z);
+        }
+        all_rots.push(rotations);
+    }
+
+    let mut all_rotss = all_rots.clone();
+    for piece in &all_rots {
+        for theta in 0..4 {
+            let mut rotations = Vec::new();
+            for [x, y, z] in piece {
+                let rotated_yz = [
+                     x*COS[theta] + z*SIN[theta],
+                     *y,
+                    -x*SIN[theta] + z*COS[theta],
+                ];
+                rotations.push(rotated_yz);
+            }
+            all_rotss.push(rotations);
+        }
+    }
+
+    let mut all_rotsss = all_rotss.clone();
+    for piece in &all_rotss {
+        for theta in 0..4 {
+            let mut rotations = Vec::new();
+            for [x, y, z] in piece {
+                let rotated_xyz = [
+                    *x,
+                    y*COS[theta] - z*SIN[theta],
+                    y*SIN[theta] + z*COS[theta],
+                ];
+                rotations.push(rotated_xyz);
+            }
+            all_rotsss.push(rotations)
+        }
+    }
+    
+    let mut unique_solutions = HashSet::new();
+    let rots = push_to_zero(all_rotsss);
+    for mut solution in rots {
+        solution.sort();
+        unique_solutions.insert(solution);
+    }
+
+    let mut rotations = Vec::new();
+    for solution in unique_solutions {
+        rotations.push(solution);
+    }
+    rotations
 }
 
 fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
