@@ -27,20 +27,19 @@ fn main() {
         for part in piece {
             println!("{:?}", part);
         }
-        println!("");
+        println!();
     }
 
-    let mut zero = Vec::new();
-    zero.push(PuzzleDense { data: zeros() });
+    let zero = vec![PuzzleDense { data: zeros() }];
 
     let mut solutions = Vec::new();
     for (i, piece) in pieces.iter().enumerate() {
         if i == 0 {
-            for s in all_puts(zero.clone(), (i + 1) as i32, &piece) {
+            for s in all_puts(zero.clone(), (i + 1) as i32, piece) {
                 solutions.push(s);
             }
         } else {
-            for s in all_rotations_and_puts(solutions.clone(), (i + 1) as i32, &piece) {
+            for s in all_rotations_and_puts(solutions.clone(), (i + 1) as i32, piece) {
                 solutions.drain(..);
                 solutions.push(s);
             }
@@ -148,7 +147,7 @@ fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
 
 fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
     let mut all_solutions = Vec::new();
-    let (max_x, max_y, max_z) = max_xyz(&piece);
+    let (max_x, max_y, max_z) = max_xyz(piece);
 
     for x_step in 0..3 - max_x {
         for y_step in 0..3 - max_y {
@@ -179,24 +178,23 @@ fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -
 }
 
 fn zeros() -> [[[i32; 3]; 3]; 3] {
-    let zeros = [
+    [
         [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    ];
-    zeros
+    ]
 }
 
 fn push_to_zero(puzzle: Puzzle) -> Puzzle {
     let mut pieces = Vec::new();
 
-    for i in 0..puzzle.len() {
+    for part in &puzzle {
         let mut piece = Vec::new();
         let mut min_x = 99;
         let mut min_y = 99;
         let mut min_z = 99;
 
-        for [x, y, z] in &puzzle[i] {
+        for [x, y, z] in part {
             if x < &min_x {
                 min_x = *x;
             }
@@ -207,7 +205,7 @@ fn push_to_zero(puzzle: Puzzle) -> Puzzle {
                 min_z = *z;
             }
         }
-        for [x, y, z] in &puzzle[i] {
+        for [x, y, z] in part {
             piece.push([x - min_x, y - min_y, z - min_z]);
         }
 
