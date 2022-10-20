@@ -80,14 +80,14 @@ fn main() {
     }
 
     if args.planes {
-        for i in 0..9 {
-            cubes[i].set_color(1., 0., 0.);
+        for piece in cubes.iter_mut().take(9) {
+            piece.set_color(1., 0., 0.);
         }
-        for i in 9..27 {
-            cubes[i].set_color(0., 1., 0.);
+        for piece in cubes.iter_mut().take(27).skip(9) {
+            piece.set_color(0., 1., 0.);
         }
-        for i in 18..27 {
-            cubes[i].set_color(0., 0., 1.);
+        for piece in cubes.iter_mut().take(27).skip(18) {
+            piece.set_color(0., 0., 1.);
         }
     }
 
@@ -96,15 +96,15 @@ fn main() {
     
     for _ in 0..1600 {
         if window.render() {
-            for i in 0..27 {
-                cubes[i].append_rotation(&rot1);
+            for piece in cubes.iter_mut().take(27) {
+                piece.append_rotation(&rot1);
             }
         }
     }
     for _ in 0..1600 {
         if window.render() {
-            for i in 0..27 {
-                cubes[i].append_rotation(&rot2)
+            for piece in cubes.iter_mut().take(27) {
+                piece.append_rotation(&rot2)
             }
         }
     }
