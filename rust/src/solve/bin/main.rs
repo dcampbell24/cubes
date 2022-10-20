@@ -43,7 +43,7 @@ fn main() {
     if args.blue {
         puzzle = blue();
     } else {
-        puzzle = minotaur()
+        puzzle = minotaur();
     }
 
     let pieces = push_to_zero(puzzle);
