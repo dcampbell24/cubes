@@ -108,4 +108,5 @@ fn main() {
             }
         }
     }
+    while window.render() { }
 }

@@ -1,11 +1,26 @@
+extern crate clap;
+
+use clap::Parser;
+
 use std::collections::HashSet;
 use std::fmt;
+use std::time::Instant;
 
 type Piece = Vec<[i32; 3]>;
 type Puzzle = Vec<Piece>;
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
+
+/// Program to display the 3x3 cube solution(s).
+/// Solves mintaur by default.
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Solve the blue problem.
+    #[arg(short, long)]
+    blue: bool,
+}
 
 #[derive(Clone, Debug)]
 struct PuzzleDense {
@@ -21,7 +36,16 @@ impl fmt::Display for PuzzleDense {
 }
 
 fn main() {
-    let puzzle = minotaur();
+    let now = Instant::now();
+    
+    let puzzle;
+    let args = Args::parse();
+    if args.blue {
+        puzzle = blue();
+    } else {
+        puzzle = minotaur()
+    }
+
     let pieces = push_to_zero(puzzle);
     for piece in &pieces {
         for part in piece {
@@ -44,6 +68,9 @@ fn main() {
     for solution in solutions {
         println!("{:}", solution);
     }
+
+    let elapsed_time = now.elapsed();
+    println!("Running the program took {} seconds.", elapsed_time.as_millis() as f64 / 1000.0);
 }
 
 fn all_rotations_and_puts(
