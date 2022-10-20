@@ -33,32 +33,35 @@ fn main() {
     let mut zero = Vec::new();
     zero.push(PuzzleDense { data: zeros() });
     
-    let piece = &pieces[0];
-    
-    let rots = all_rotations(piece);
-    for solution in &rots {
-        for part in solution {
-            println!("{:?}", part);
-        }
-        println!("");
-    }
-
     let mut solutions = Vec::new();
-    for rot in rots {
-        for s in all_puts(zero.clone(), 1, &rot) {
+    for (i, piece) in pieces.iter().enumerate() {
+        if i == 0 {
+            for s in all_puts(zero.clone(), (i + 1) as i32, &piece) {
+                solutions.push(s);
+            }
+        } else {
+            for s in all_rotations_and_puts(solutions.clone(), (i + 1) as i32, &piece) {
+                solutions.drain(..);
+                solutions.push(s);
+            }
+        }
+    }
+                
+    for solution in solutions {
+        println!("{:}", solution);
+    }    
+}
+
+fn all_rotations_and_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
+    let mut solutions = Vec::new();
+    for rotation in all_rotations(piece) {
+        for s in all_puts(already_placed.clone(), piece_count, &rotation) {
             solutions.push(s);
         }
     }
-    // solutions = all_puts(solutions, 1, piece);
-    
-    //let piece = &pieces[1];
-    //solutions = all_puts(solutions, 2, piece);
-
-    for solution in solutions {
-        println!("{:}", solution);
-    }
-    
+    solutions
 }
+
 
 fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
     let mut all_rots = Vec::new();
