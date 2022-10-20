@@ -21,7 +21,7 @@ impl fmt::Display for PuzzleDense {
 }
 
 fn main() {
-    let puzzle = blue();
+    let puzzle = minotaur();
     let pieces = push_to_zero(puzzle);
     for piece in &pieces {
         for part in piece {
@@ -226,4 +226,15 @@ fn blue() -> Puzzle {
     }
 
     blue
+}
+
+fn minotaur() -> Puzzle {
+    let mut minotaur = Vec::new();
+    minotaur.push(vec![[1, 2, 1], [2, 2, 1], [2, 1, 1], [2, 1, 2]]);
+    minotaur.push(vec![[1, 2, 1], [2, 2, 1], [2, 2, 2], [2, 1, 2]]);
+    minotaur.push(vec![[1, 1, 1], [2, 1, 1], [3, 1, 1], [2, 2, 1]]);
+    minotaur.push(vec![[1, 1, 2], [1, 2, 2], [1, 2, 1], [1, 3, 1], [2, 2, 1]]);
+    minotaur.push(vec![[1, 3, 1], [2, 1, 2], [2, 2, 2], [2, 2, 1], [2, 3, 1]]);
+    minotaur.push(vec![[1, 1, 1], [1, 2, 1], [1, 3, 1], [2, 1, 1], [1, 2, 2]]);
+    minotaur
 }
