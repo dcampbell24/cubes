@@ -1,5 +1,5 @@
-use std::fmt;
 use std::collections::HashSet;
+use std::fmt;
 
 type Piece = Vec<[i32; 3]>;
 type Puzzle = Vec<Piece>;
@@ -29,10 +29,10 @@ fn main() {
         }
         println!("");
     }
-    
+
     let mut zero = Vec::new();
     zero.push(PuzzleDense { data: zeros() });
-    
+
     let mut solutions = Vec::new();
     for (i, piece) in pieces.iter().enumerate() {
         if i == 0 {
@@ -46,13 +46,17 @@ fn main() {
             }
         }
     }
-                
+
     for solution in solutions {
         println!("{:}", solution);
-    }    
+    }
 }
 
-fn all_rotations_and_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
+fn all_rotations_and_puts(
+    already_placed: Vec<PuzzleDense>,
+    piece_count: i32,
+    piece: &Piece,
+) -> Vec<PuzzleDense> {
     let mut solutions = Vec::new();
     for rotation in all_rotations(piece) {
         for s in all_puts(already_placed.clone(), piece_count, &rotation) {
@@ -62,15 +66,14 @@ fn all_rotations_and_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, pi
     solutions
 }
 
-
 fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
     let mut all_rots = Vec::new();
     for theta in 0..4 {
         let mut rotations = Vec::new();
         for [x, y, z] in piece {
             let rotated_z = [
-                x*COS[theta] - y*SIN[theta],
-                x*SIN[theta] + y*COS[theta],
+                x * COS[theta] - y * SIN[theta],
+                x * SIN[theta] + y * COS[theta],
                 *z,
             ];
             rotations.push(rotated_z);
@@ -84,9 +87,9 @@ fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
             let mut rotations = Vec::new();
             for [x, y, z] in piece {
                 let rotated_yz = [
-                     x*COS[theta] + z*SIN[theta],
-                     *y,
-                    -x*SIN[theta] + z*COS[theta],
+                    x * COS[theta] + z * SIN[theta],
+                    *y,
+                    -x * SIN[theta] + z * COS[theta],
                 ];
                 rotations.push(rotated_yz);
             }
@@ -101,15 +104,15 @@ fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
             for [x, y, z] in piece {
                 let rotated_xyz = [
                     *x,
-                    y*COS[theta] - z*SIN[theta],
-                    y*SIN[theta] + z*COS[theta],
+                    y * COS[theta] - z * SIN[theta],
+                    y * SIN[theta] + z * COS[theta],
                 ];
                 rotations.push(rotated_xyz);
             }
             all_rotsss.push(rotations)
         }
     }
-    
+
     let mut unique_solutions = HashSet::new();
     let rots = push_to_zero(all_rotsss);
     for mut solution in rots {
@@ -133,10 +136,10 @@ fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
         if x > &max_x {
             max_x = *x;
         }
-        if y > &max_y{
+        if y > &max_y {
             max_y = *y;
         }
-        if z > &max_z{
+        if z > &max_z {
             max_z = *z;
         }
     }
@@ -151,20 +154,22 @@ fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -
         for y_step in 0..3 - max_y {
             for z_step in 0..3 - max_z {
                 let already_placed = already_placed.clone();
-                'next_piece:
-                for mut puzzle in already_placed {
-                    
+                'next_piece: for mut puzzle in already_placed {
                     for [x, y, z] in piece {
-                        if puzzle.data[(x + x_step) as usize][(y + y_step) as usize][(z + z_step) as usize] > 0 {
+                        if puzzle.data[(x + x_step) as usize][(y + y_step) as usize]
+                            [(z + z_step) as usize]
+                            > 0
+                        {
                             continue 'next_piece;
                         }
                     }
-                    
+
                     for [x, y, z] in piece {
-                        puzzle.data[(x + x_step) as usize][(y + y_step) as usize][(z + z_step) as usize] = piece_count;
+                        puzzle.data[(x + x_step) as usize][(y + y_step) as usize]
+                            [(z + z_step) as usize] = piece_count;
                     }
 
-                    all_solutions.push(puzzle);                
+                    all_solutions.push(puzzle);
                 }
             }
         }
@@ -175,21 +180,9 @@ fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -
 
 fn zeros() -> [[[i32; 3]; 3]; 3] {
     let zeros = [
-        [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-        ],
-        [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-        ],
-        [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-        ],
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
     ];
     zeros
 }
@@ -224,32 +217,17 @@ fn push_to_zero(puzzle: Puzzle) -> Puzzle {
     pieces
 }
 
-
 fn blue() -> Puzzle {
     let mut blue = Vec::new();
-    
-    blue.push(vec!(
-        [2, 0, 2],
-        [2, 1, 2],
-        [2, 2, 2],
-    ));
 
-    let piece_2 = vec!(
-        [1, 0, 2],
-        [1, 1, 1],
-        [1, 1, 2],
-        [2, 0, 2],
-    );
+    blue.push(vec![[2, 0, 2], [2, 1, 2], [2, 2, 2]]);
+
+    let piece_2 = vec![[1, 0, 2], [1, 1, 1], [1, 1, 2], [2, 0, 2]];
     for _ in 0..3 {
         blue.push(piece_2.clone());
     }
 
-    let piece_3 = vec!(
-        [1, 0, 2],
-        [1, 1, 2],
-        [2, 0, 1],
-        [2, 0, 2],
-    );
+    let piece_3 = vec![[1, 0, 2], [1, 1, 2], [2, 0, 1], [2, 0, 2]];
     for _ in 0..3 {
         blue.push(piece_3.clone());
     }
