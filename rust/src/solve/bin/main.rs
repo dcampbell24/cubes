@@ -35,14 +35,9 @@ fn main() {
     let mut solutions = Vec::new();
     for (i, piece) in pieces.iter().enumerate() {
         if i == 0 {
-            for s in all_puts(zero.clone(), (i + 1) as i32, piece) {
-                solutions.push(s);
-            }
+            solutions = all_puts(zero.clone(), (i + 1) as i32, piece);
         } else {
-            for s in all_rotations_and_puts(solutions.clone(), (i + 1) as i32, piece) {
-                solutions.drain(..);
-                solutions.push(s);
-            }
+            solutions = all_rotations_and_puts(solutions.clone(), (i + 1) as i32, piece);
         }
     }
 
