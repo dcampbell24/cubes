@@ -6,8 +6,7 @@ use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::time::Instant;
 
-type Piece = Vec<[i32; 3]>;
-type Puzzle = Vec<Piece>;
+use cubes_rs::{Piece, Puzzle};
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
@@ -41,9 +40,9 @@ fn main() {
     let puzzle;
     let args = Args::parse();
     if args.blue {
-        puzzle = blue();
+        puzzle = cubes_rs::blue();
     } else {
-        puzzle = minotaur();
+        puzzle = cubes_rs::minotaur();
     }
 
     let pieces = push_to_zero(puzzle);
@@ -265,33 +264,4 @@ fn push_to_zero(puzzle: Puzzle) -> Puzzle {
     }
 
     pieces
-}
-
-fn blue() -> Puzzle {
-    let mut blue = Vec::new();
-
-    blue.push(vec![[2, 0, 2], [2, 1, 2], [2, 2, 2]]);
-
-    let piece_2 = vec![[1, 0, 2], [1, 1, 1], [1, 1, 2], [2, 0, 2]];
-    for _ in 0..3 {
-        blue.push(piece_2.clone());
-    }
-
-    let piece_3 = vec![[1, 0, 2], [1, 1, 2], [2, 0, 1], [2, 0, 2]];
-    for _ in 0..3 {
-        blue.push(piece_3.clone());
-    }
-
-    blue
-}
-
-fn minotaur() -> Puzzle {
-    let mut minotaur = Vec::new();
-    minotaur.push(vec![[1, 2, 1], [2, 2, 1], [2, 1, 1], [2, 1, 2]]);
-    minotaur.push(vec![[1, 2, 1], [2, 2, 1], [2, 2, 2], [2, 1, 2]]);
-    minotaur.push(vec![[1, 1, 1], [2, 1, 1], [3, 1, 1], [2, 2, 1]]);
-    minotaur.push(vec![[1, 1, 2], [1, 2, 2], [1, 2, 1], [1, 3, 1], [2, 2, 1]]);
-    minotaur.push(vec![[1, 3, 1], [2, 1, 2], [2, 2, 2], [2, 2, 1], [2, 3, 1]]);
-    minotaur.push(vec![[1, 1, 1], [1, 2, 1], [1, 3, 1], [2, 1, 1], [1, 2, 2]]);
-    minotaur
 }

@@ -446,6 +446,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
 
 [[package]]
+name = "cubes-rs"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "env_logger",
+ "kiss3d",
+ "nalgebra",
+]
+
+[[package]]
 name = "darling"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1610,16 +1620,6 @@ name = "regex-syntax"
 version = "0.6.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
-
-[[package]]
-name = "rust"
-version = "0.1.0"
-dependencies = [
- "clap",
- "env_logger",
- "kiss3d",
- "nalgebra",
-]
 
 [[package]]
 name = "rustc-hash"
