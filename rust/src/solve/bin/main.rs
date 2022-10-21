@@ -2,7 +2,7 @@ extern crate clap;
 
 use clap::Parser;
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::time::Instant;
 
@@ -22,7 +22,7 @@ struct Args {
     blue: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct PuzzleDense {
     data: [[[i32; 3]; 3]; 3],
 }
@@ -65,12 +65,42 @@ fn main() {
         }
     }
 
+    let solutions = unique_pieces(solutions);
     for solution in solutions {
         println!("{:}", solution);
     }
 
     let elapsed_time = now.elapsed();
     println!("Running the program took {} seconds.", elapsed_time.as_millis() as f64 / 1000.0);
+}
+
+fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
+    let mut puzzles_unique = HashSet::new();
+    for mut puzzle in puzzles {
+        let mut puzzle_unique: HashMap<i32, i32> = HashMap::new();
+        let mut piece_count = 0;
+        for x in 0..3 {
+            for y in 0..3 {
+                for z in 0..3 {
+                    let value = puzzle.data[x][y][z];
+                    if puzzle_unique.contains_key(&value) {
+                        puzzle.data[x][y][z] = puzzle_unique[&value]
+                    } else {
+                        piece_count += 1;
+                        puzzle_unique.insert(value, piece_count);
+                        puzzle.data[x][y][z] = puzzle_unique[&value]
+                    }
+                }
+            }
+        }        
+        puzzles_unique.insert(puzzle);
+    }
+
+    let mut all_puzzles = Vec::new();
+    for puzzle in puzzles_unique {
+        all_puzzles.push(puzzle);
+    }
+    all_puzzles
 }
 
 fn all_rotations_and_puts(
