@@ -19,6 +19,10 @@ struct Args {
     /// Solve the blue problem.
     #[arg(short, long)]
     blue: bool,
+
+    /// Solve the green problem.
+    #[arg(short, long)]
+    green: bool,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -41,6 +45,8 @@ fn main() {
     let args = Args::parse();
     if args.blue {
         puzzle = cubes_rs::blue();
+    } else if args.green {
+        puzzle = cubes_rs::green();
     } else {
         puzzle = cubes_rs::minotaur();
     }
