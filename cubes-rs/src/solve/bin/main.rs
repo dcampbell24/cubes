@@ -12,17 +12,12 @@ const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
 
 /// Program to display the 3x3 cube solution(s).
-/// Solves mintaur by default.
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Solve the blue problem.
-    #[arg(short, long)]
-    blue: bool,
-
-    /// Solve the green problem.
-    #[arg(short, long)]
-    green: bool,
+    /// blue, green, or minotaur. 
+    #[arg(short, long, default_value_t = String::from("minotaur"))]
+    puzzle: String,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -40,16 +35,14 @@ impl fmt::Display for PuzzleDense {
 
 fn main() {
     let now = Instant::now();
-    
-    let puzzle;
+
     let args = Args::parse();
-    if args.blue {
-        puzzle = cubes_rs::blue();
-    } else if args.green {
-        puzzle = cubes_rs::green();
-    } else {
-        puzzle = cubes_rs::minotaur();
-    }
+    let puzzle = match args.puzzle.as_str() {
+        "blue" => cubes_rs::blue(),
+        "green" => cubes_rs::green(),
+        "minotaur" => cubes_rs::minotaur(),
+        _ => panic!("invalid argument"),
+    };
 
     let pieces = push_to_zero(puzzle);
     for piece in &pieces {
