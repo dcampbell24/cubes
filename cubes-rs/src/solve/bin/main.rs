@@ -1,24 +1,11 @@
-extern crate clap;
-
-use clap::Parser;
-
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::time::Instant;
 
-use cubes_rs::{Piece, Puzzle};
+use cubes_rs::{Piece, Puzzle, choose_puzzle};
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
-
-/// Program to display the 3x3 cube solution(s).
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// blue, green, or minotaur. 
-    #[arg(short, long, default_value_t = String::from("minotaur"))]
-    puzzle: String,
-}
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct PuzzleDense {
@@ -36,14 +23,7 @@ impl fmt::Display for PuzzleDense {
 fn main() {
     let now = Instant::now();
 
-    let args = Args::parse();
-    let puzzle = match args.puzzle.as_str() {
-        "blue" => cubes_rs::blue(),
-        "green" => cubes_rs::green(),
-        "minotaur" => cubes_rs::minotaur(),
-        _ => panic!("invalid argument"),
-    };
-
+    let puzzle = choose_puzzle();
     let pieces = push_to_zero(puzzle);
     for piece in &pieces {
         for part in piece {

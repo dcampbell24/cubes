@@ -1,5 +1,38 @@
+extern crate clap;
+
+use clap::{Parser, ValueEnum};
+
 pub type Piece = Vec<[i32; 3]>;
 pub type Puzzle = Vec<Piece>;
+
+/// Program to display the 3x3 cube solution(s).
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// What puzzle to solve.
+    #[arg(value_enum, default_value_t = PuzzleOption::Minotaur)]
+    puzzle: PuzzleOption,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum PuzzleOption {
+    /// blue
+    Blue,
+    /// green
+    Green,
+    /// minotaur
+    Minotaur
+}
+
+pub fn choose_puzzle() -> Puzzle {
+    let cli = Cli::parse();
+
+    match cli.puzzle {
+        PuzzleOption::Blue => blue(),
+        PuzzleOption::Green => green(),
+        PuzzleOption::Minotaur => minotaur(),
+    }
+}
 
 pub fn blue() -> Puzzle {
     let mut blue = Vec::new();
