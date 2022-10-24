@@ -49,7 +49,7 @@ fn main() {
     }
 
     let elapsed_time = now.elapsed();
-    println!("Running the program took {} seconds.", elapsed_time.as_millis() as f64 / 1000.0);
+    println!("Running the program took {} seconds.", elapsed_time.as_micros() as f64 / 1_000_000.0);
 }
 
 fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {

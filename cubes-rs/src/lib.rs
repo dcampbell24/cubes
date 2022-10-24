@@ -24,6 +24,12 @@ enum PuzzleOption {
     Minotaur,
     /// orange
     Orange,
+    /// red
+    Red,
+    /// white
+    White,
+    /// yellow
+    Yellow,
 }
 
 pub fn choose_puzzle() -> Puzzle {
@@ -34,6 +40,9 @@ pub fn choose_puzzle() -> Puzzle {
         PuzzleOption::Green => green(),
         PuzzleOption::Minotaur => minotaur(),
         PuzzleOption::Orange => orange(),
+        PuzzleOption::Red => red(),
+        PuzzleOption::White => white(),
+        PuzzleOption::Yellow => yellow(),
     }
 }
 
@@ -89,4 +98,40 @@ pub fn orange() -> Puzzle {
         orange.push(vec![[1, 1, 3], [2, 1, 3], [3, 1, 3], [3, 2, 3]]);
     }
     orange
+}
+
+pub fn red() -> Puzzle {
+    let mut red = Vec::new();
+    red.push(vec![[1, 1, 3], [1, 2, 3], [1, 3, 3], [2, 1, 3], [2, 2, 3], [3, 1, 3]]);
+    red.push(vec![[2, 1, 3], [2, 2, 3], [3, 1, 3], [3, 2, 2], [3, 2, 3], [3, 3, 2]]);
+    red.push(vec![[2, 3, 3], [3, 1, 3], [3, 2, 3], [3, 3, 1], [3, 3, 2], [3, 3, 3]]);
+    red.push(vec![[2, 1, 3], [3, 1, 3], [3, 2, 3], [3, 3, 2], [3, 3, 3]]);
+    red.push(vec![[2, 1, 3], [3, 1, 3], [3, 2, 2], [3, 2, 3]]);
+    red
+}
+
+pub fn white() -> Puzzle {
+    let mut white = Vec::new();
+    white.push(vec![[1, 1, 2], [2, 1, 2], [2, 2, 2], [2, 2, 3], [3, 2, 3]]);
+    white.push(vec![[2, 1, 3], [2, 2, 2], [2, 2, 3], [2, 3, 3], [3, 3, 3]]);
+    white.push(vec![[2, 1, 3], [2, 2, 3], [2, 3, 3], [3, 3, 2], [3, 3, 3]]);
+    white.push(vec![[1, 1, 3], [1, 2, 3], [2, 1, 3], [3, 1, 3]]);
+    for _ in 0..2 {
+        white.push(vec![[2, 1, 3], [2, 2, 3], [3, 2, 2], [3, 2, 3]]);
+    }
+    white
+}
+
+pub fn yellow() -> Puzzle {
+    let mut yellow = Vec::new();
+    yellow.push(vec![[2, 1, 3], [2, 2, 3], [3, 2, 3], [3, 3, 2], [3, 3, 3]]);
+    yellow.push(vec![[2, 1, 2], [2, 2, 2], [2, 2, 3], [3, 1, 2]]);
+    yellow.push(vec![[2, 1, 3], [2, 2, 2], [2, 2, 3], [3, 1, 3]]);
+    for _ in 0..2 {
+        yellow.push(vec![[1, 1, 3], [2, 1, 3], [3, 1, 3], [3, 2, 3]])
+    } 
+    for _ in 0..2 {
+        yellow.push(vec![[2, 1, 3], [3, 1, 3], [3, 2, 3]]);   
+    }
+    yellow
 }
