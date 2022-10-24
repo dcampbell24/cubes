@@ -21,7 +21,9 @@ enum PuzzleOption {
     /// green
     Green,
     /// minotaur
-    Minotaur
+    Minotaur,
+    /// orange
+    Orange,
 }
 
 pub fn choose_puzzle() -> Puzzle {
@@ -31,6 +33,7 @@ pub fn choose_puzzle() -> Puzzle {
         PuzzleOption::Blue => blue(),
         PuzzleOption::Green => green(),
         PuzzleOption::Minotaur => minotaur(),
+        PuzzleOption::Orange => orange(),
     }
 }
 
@@ -74,4 +77,17 @@ pub fn minotaur() -> Puzzle {
     minotaur.push(vec![[1, 3, 1], [2, 1, 2], [2, 2, 2], [2, 2, 1], [2, 3, 1]]);
     minotaur.push(vec![[1, 1, 1], [1, 2, 1], [1, 3, 1], [2, 1, 1], [1, 2, 2]]);
     minotaur
+}
+
+pub fn orange() -> Puzzle {
+    let mut orange = Vec::new();
+    orange.push(vec![[2, 1, 2], [2, 2, 2], [2, 2, 3], [3, 1, 2]]);
+    for _ in 0..2 {
+        orange.push(vec![[1, 1, 3], [2, 1, 3], [3, 1, 3], [3, 2, 3]]);
+    }
+    orange.push(vec![[1, 1, 3], [2, 1, 3], [3, 1, 2], [3, 1, 3], [3, 2, 3]]);
+    for _ in 0..2 {
+        orange.push(vec![[1, 1, 3], [2, 1, 3], [3, 1, 3], [3, 2, 2], [3, 2, 3]]);
+    }
+    orange
 }
