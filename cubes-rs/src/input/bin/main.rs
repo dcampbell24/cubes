@@ -1,10 +1,15 @@
 use eframe::egui;
+use egui::emath::Vec2;
 use serde::{Deserialize, Serialize};
 
 fn main() {
-    let options = eframe::NativeOptions::default();
+    let options = eframe::NativeOptions {
+        initial_window_size: Some(Vec2 { x: 180., y: 300. }),
+        ..Default::default()    
+    };
+
     eframe::run_native(
-        "Polycubes Input",
+        "Polycubes",
         options,
         Box::new(|_cc| Box::new(MyApp::default())),
     );
@@ -36,7 +41,7 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("polycube piece");
             ui.horizontal(|ui| {
-                ui.label("file name: ");
+                ui.set_width(100.);
                 ui.text_edit_singleline(&mut self.name);
                 ui.label(".ron")
             });
@@ -50,7 +55,7 @@ impl eframe::App for MyApp {
                 for y in 0..3 {
                     ui.horizontal(|ui| {
                         for z in 0..3 {
-                            if ui.toggle_value(&mut self.cube[x][y][z], "  ").clicked() {
+                            if ui.toggle_value(&mut self.cube[x][y][z], "    ").clicked() {
 
                             }
                         }
