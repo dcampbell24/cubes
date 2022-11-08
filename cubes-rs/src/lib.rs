@@ -280,7 +280,7 @@ pub fn choose_puzzle() -> Puzzle {
 
     let name = match cli.puzzle {
         PuzzleOption::Blue => "blue",
-        PuzzleOption::Green => "green",
+        PuzzleOption::Green => todo!(),
         PuzzleOption::Minotaur => "minotaur",
         PuzzleOption::Orange => "orange",
         PuzzleOption::Red => "red",
