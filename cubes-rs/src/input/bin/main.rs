@@ -1,6 +1,10 @@
 use eframe::egui;
 use egui::emath::Vec2;
-use serde::{Deserialize, Serialize};
+
+use std::fs::{self, File};
+use std::io::Write;
+
+use cubes_rs::Pieces;
 
 fn main() {
     let options = eframe::NativeOptions {
@@ -13,11 +17,6 @@ fn main() {
         options,
         Box::new(|_cc| Box::new(MyApp::default())),
     );
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct Pieces {
-    data: Vec<Vec<[usize; 3]>>
 }
 
 struct MyApp {
@@ -43,7 +42,6 @@ impl eframe::App for MyApp {
             ui.horizontal(|ui| {
                 ui.set_width(100.);
                 ui.text_edit_singleline(&mut self.name);
-                ui.label(".ron")
             });
             
             for x in 0..3 {
@@ -73,7 +71,7 @@ impl eframe::App for MyApp {
                             for z in 0..3 {
                                 if self.cube[x][y][z] {
                                     println!("{:?} {:?} {:?}", x, y, z);
-                                    self.pieces.data[len].push([x, y, z]);
+                                    self.pieces.data[len].push([x as i32, y as i32, z as i32]);
                                 }
                             }
                         }
@@ -83,7 +81,14 @@ impl eframe::App for MyApp {
 
                 if ui.button("save all").clicked() {
                     println!("{}", ron::to_string(&self.pieces).unwrap());
-                    println!();    
+                    println!();
+
+                    let mut buffer = File::create(format!("puzzles/{}", self.name)).unwrap();
+                    let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
+                    buffer.write_all(&encoded).unwrap();
+                    
+                    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", self.name)).unwrap()).unwrap();
+                    println!("{:?}", decoded);
                 }
             });
         });
