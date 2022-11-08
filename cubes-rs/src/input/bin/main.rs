@@ -1,7 +1,7 @@
 use eframe::egui;
 use egui::emath::Vec2;
 
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::Write;
 
 use cubes_rs::Pieces;
@@ -86,9 +86,6 @@ impl eframe::App for MyApp {
                     let mut buffer = File::create(format!("puzzles/{}", self.name)).unwrap();
                     let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
                     buffer.write_all(&encoded).unwrap();
-                    
-                    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", self.name)).unwrap()).unwrap();
-                    println!("{:?}", decoded);
                 }
             });
         });
