@@ -291,3 +291,8 @@ pub fn choose_puzzle() -> Puzzle {
     let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", name)).unwrap()).unwrap();
     decoded.data
 }
+
+pub fn get_puzzle(puzzle: &str) -> Puzzle {
+    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
+    decoded.data
+}

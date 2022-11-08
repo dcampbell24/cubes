@@ -3,9 +3,10 @@ use std::fs::{self, File};
 use std::io::ErrorKind::AlreadyExists;
 use std::io::Write as _;
 
+use cubes_rs::get_puzzle;
 
 fn main()-> std::io::Result<()> {
-    let puzzles = vec![cubes_rs::minotaur(), cubes_rs::blue()];
+    let puzzles = vec![get_puzzle("minotaur"), get_puzzle("blue")];
     let puzzles_string = vec![
         String::from("minotaur"),
         String::from("blue")
