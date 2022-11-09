@@ -80,9 +80,6 @@ impl eframe::App for MyApp {
                 }
 
                 if ui.button("save all").clicked() {
-                    println!("{}", ron::to_string(&self.pieces).unwrap());
-                    println!();
-
                     let mut buffer = File::create(format!("puzzles/{}", self.name)).unwrap();
                     let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
                     buffer.write_all(&encoded).unwrap();
