@@ -7,7 +7,7 @@ fn main() {
 
     let (puzzle, puzzle_string) = choose_puzzle();
     
-    write_obj_file(puzzle.clone(), &puzzle_string).unwrap();
+    write_obj_file(&puzzle, &puzzle_string).unwrap();
     
     let solutions = solve(puzzle);
     for solution in solutions {

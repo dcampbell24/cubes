@@ -293,7 +293,7 @@ pub fn get_puzzle(puzzle: &str) -> Puzzle {
     decoded.data
 }
 
-pub fn write_obj_file(puzzle: Puzzle, puzzle_string: &str)-> std::io::Result<()> {
+pub fn write_obj_file(puzzle: &Puzzle, puzzle_string: &str)-> std::io::Result<()> {
     match fs::create_dir(format!("target/{}", puzzle_string)) {
         Err(e) if e.kind() == AlreadyExists => { },
         e @ Err(_) => return e,
