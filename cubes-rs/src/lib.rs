@@ -1,3 +1,9 @@
+use std::fmt::Write;
+use std::fs::File;
+use std::io::ErrorKind::AlreadyExists;
+use std::io::Write as _;
+
+
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 
@@ -8,7 +14,7 @@ const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-struct PuzzleDense {
+pub struct PuzzleDense {
     data: [[[i32; 3]; 3]; 3],
 }
 
@@ -29,15 +35,8 @@ pub struct Pieces {
 
 pub type Puzzle = Vec<Piece>;
 
-pub fn solve(puzzle: Puzzle) {
+pub fn solve(puzzle: Puzzle) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
-    for piece in &pieces {
-        for part in piece {
-            println!("{:?}", part);
-        }
-        println!();
-    }
-
     let zero = vec![PuzzleDense { data: zeros() }];
 
     let mut solutions = Vec::new();
@@ -49,10 +48,7 @@ pub fn solve(puzzle: Puzzle) {
         }
     }
 
-    let solutions = unique_pieces(solutions);
-    for solution in solutions {
-        println!("{:}", solution);
-    }
+    unique_pieces(solutions)
 }
 
 fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
@@ -275,24 +271,87 @@ enum PuzzleOption {
     Yellow,
 }
 
-pub fn choose_puzzle() -> Puzzle {
+pub fn choose_puzzle() -> (Puzzle, String) {
     let cli = Cli::parse();
 
     let name = match cli.puzzle {
-        PuzzleOption::Blue => "blue",
+        PuzzleOption::Blue => "blue".to_string(),
         PuzzleOption::Green => todo!(),
-        PuzzleOption::Minotaur => "minotaur",
-        PuzzleOption::Orange => "orange",
-        PuzzleOption::Red => "red",
-        PuzzleOption::White => "white",
-        PuzzleOption::Yellow => "yellow",
+        PuzzleOption::Minotaur => "minotaur".to_string(),
+        PuzzleOption::Orange => "orange".to_string(),
+        PuzzleOption::Red => "red".to_string(),
+        PuzzleOption::White => "white".to_string(),
+        PuzzleOption::Yellow => "yellow".to_string(),
     };
 
-    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", name)).unwrap()).unwrap();
-    decoded.data
+    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", &name)).unwrap()).unwrap();
+    (decoded.data, name)
 }
 
 pub fn get_puzzle(puzzle: &str) -> Puzzle {
     let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
     decoded.data
+}
+
+pub fn write_obj_file(puzzle: Puzzle, puzzle_string: &str)-> std::io::Result<()> {
+    match fs::create_dir(format!("target/{}", puzzle_string)) {
+        Err(e) if e.kind() == AlreadyExists => { },
+        e @ Err(_) => return e,
+        Ok(_) => { },
+    }
+    
+    write_mtl_file(&puzzle_string)?;
+
+    for (i, piece) in puzzle.iter().enumerate() {
+        let mut buffer = File::create(format!("target/{}/piece_{}.obj", puzzle_string, i))?;
+        let mut string = String::new();
+            
+        writeln!(string, "# Rust generated OBJ file.").unwrap();        
+        writeln!(string, "mtllib piece.mtl").unwrap();
+        writeln!(string, "usemtl {}", 0).unwrap();
+
+        for [x, y, z] in piece {
+            writeln!(string, "v {} {} {}", x - 1, y - 1, z - 1).unwrap();
+            writeln!(string, "v {} {} {}", x - 1, y, z - 1).unwrap();
+            writeln!(string, "v {} {} {}", x, y - 1, z - 1).unwrap();
+            writeln!(string, "v {} {} {}", x, y, z - 1).unwrap();
+            writeln!(string, "v {} {} {}", x - 1, y - 1, z).unwrap();
+            writeln!(string, "v {} {} {}", x - 1, y, z).unwrap();
+            writeln!(string, "v {} {} {}", x, y - 1, z).unwrap();
+            writeln!(string, "v {} {} {}", x, y, z).unwrap();
+        }
+
+        for (i, _) in piece.iter().enumerate() {
+            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 4, i * 8 + 3).unwrap();
+            writeln!(string, "f {} {} {} {}", i * 8 + 5, i * 8 + 6, i * 8 + 8, i * 8 + 7).unwrap();
+            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 6, i * 8 + 5).unwrap();
+            writeln!(string, "f {} {} {} {}", i * 8 + 4, i * 8 + 3, i * 8 + 7, i * 8 + 8).unwrap();
+            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 5, i * 8 + 7, i * 8 + 3).unwrap();
+            writeln!(string, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4).unwrap();
+        }
+
+        buffer.write_all(&string.into_bytes())?;
+    }
+    Ok(())
+}
+
+fn write_mtl_file(path: &str) -> std::io::Result<()> {
+    let mut buffer = File::create(format!("target/{}/piece.mtl", path))?;
+    let mut string = String::new();
+    
+    writeln!(string, "# Rust generated MTL file").unwrap();
+    writeln!(string, "newmtl 0").unwrap();
+    
+    match path {
+        "blue" => writeln!(string, "Kd 0.0 0.0 1.0").unwrap(),
+        "green" => todo!(),
+        "minotaur" => writeln!(string, "Kd 0.3 0.3 0.3").unwrap(),
+        "orange" => writeln!(string, "Kd 1.0 0.3 0.0").unwrap(),
+        "red" => writeln!(string, "Kd 1.0 0.0 0.0").unwrap(),
+        "white" => writeln!(string, "Kd 0.6 0.6 0.6").unwrap(),
+        "yellow" => writeln!(string, "Kd 1.0 1.0 0.0").unwrap(),
+        _ => unreachable!(),
+    }
+
+    buffer.write_all(&string.into_bytes())
 }

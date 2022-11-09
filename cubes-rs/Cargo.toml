@@ -25,9 +25,5 @@ name = "input"
 path = "src/input/bin/main.rs"
 
 [[bin]]
-name = "make_obj"
-path = "src/make_obj/bin/main.rs"
-
-[[bin]]
 name = "solve"
 path = "src/solve/bin/main.rs"
