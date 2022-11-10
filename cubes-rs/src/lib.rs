@@ -293,7 +293,59 @@ pub fn get_puzzle(puzzle: &str) -> Puzzle {
     decoded.data
 }
 
-pub fn write_obj_file(puzzle: &Puzzle, puzzle_string: &str)-> std::io::Result<()> {
+pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
+    let mut buffer = File::create(format!("target/{}/solution.mtl", puzzle_string)).unwrap();
+    let mut string = String::new();
+    
+    writeln!(string, "# Rust generated MTL file").unwrap();
+
+    writeln!(string, "newmtl 1").unwrap();
+    writeln!(string, "Kd 1.0 0.0 0.0").unwrap();
+
+    writeln!(string, "newmtl 2").unwrap();
+    writeln!(string, "Kd 0.0 1.0 0.0").unwrap();
+
+    writeln!(string, "newmtl 3").unwrap();
+    writeln!(string, "Kd 0.0 0.0 1.0").unwrap();
+    
+    writeln!(string, "newmtl 4").unwrap();
+    writeln!(string, "Kd 1.0 1.0 0.0").unwrap();
+    
+    writeln!(string, "newmtl 5").unwrap();
+    writeln!(string, "Kd 0.0 1.0 1.0").unwrap();
+
+    writeln!(string, "newmtl 6").unwrap();
+    writeln!(string, "Kd 1.0 0.5 0.0").unwrap();
+
+    writeln!(string, "newmtl 7").unwrap();
+    writeln!(string, "Kd 0.6 0.6 0.6").unwrap();
+
+    writeln!(string, "newmtl 8").unwrap();
+    writeln!(string, "Kd 0.3 0.3 0.3").unwrap();
+
+    buffer.write_all(&string.into_bytes()).unwrap();
+
+    let mut buffer = File::create(format!("target/{}/solution.obj", puzzle_string)).unwrap();
+    let mut string = String::new();
+        
+    writeln!(string, "# Rust generated OBJ file.").unwrap();        
+    writeln!(string, "mtllib solution.mtl").unwrap();
+
+    for x in 0..3 {
+        for y in 0..3 {
+            for z in 0..3 {
+                let color = puzzle.data[x as usize][y as usize][z as usize];
+                writeln!(string, "usemtl {}", color).unwrap();
+                write_box_points(&mut string, &x, &y, &z);
+                write_box_faces( &mut string, (x*9 + y*3 + z) as usize);
+            }
+        }
+    }
+
+    buffer.write_all(&string.into_bytes()).unwrap();
+}
+
+pub fn write_obj_file(puzzle: &Puzzle, puzzle_string: &str) -> std::io::Result<()> {
     match fs::create_dir(format!("target/{}", puzzle_string)) {
         Err(e) if e.kind() == AlreadyExists => { },
         e @ Err(_) => return e,
@@ -311,28 +363,36 @@ pub fn write_obj_file(puzzle: &Puzzle, puzzle_string: &str)-> std::io::Result<()
         writeln!(string, "usemtl {}", 0).unwrap();
 
         for [x, y, z] in piece {
-            writeln!(string, "v {} {} {}", x - 1, y - 1, z - 1).unwrap();
-            writeln!(string, "v {} {} {}", x - 1, y, z - 1).unwrap();
-            writeln!(string, "v {} {} {}", x, y - 1, z - 1).unwrap();
-            writeln!(string, "v {} {} {}", x, y, z - 1).unwrap();
-            writeln!(string, "v {} {} {}", x - 1, y - 1, z).unwrap();
-            writeln!(string, "v {} {} {}", x - 1, y, z).unwrap();
-            writeln!(string, "v {} {} {}", x, y - 1, z).unwrap();
-            writeln!(string, "v {} {} {}", x, y, z).unwrap();
+            write_box_points(&mut string, x, y, z)
         }
 
         for (i, _) in piece.iter().enumerate() {
-            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 4, i * 8 + 3).unwrap();
-            writeln!(string, "f {} {} {} {}", i * 8 + 5, i * 8 + 6, i * 8 + 8, i * 8 + 7).unwrap();
-            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 6, i * 8 + 5).unwrap();
-            writeln!(string, "f {} {} {} {}", i * 8 + 4, i * 8 + 3, i * 8 + 7, i * 8 + 8).unwrap();
-            writeln!(string, "f {} {} {} {}", i * 8 + 1, i * 8 + 5, i * 8 + 7, i * 8 + 3).unwrap();
-            writeln!(string, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4).unwrap();
+            write_box_faces(&mut string, i)
         }
 
         buffer.write_all(&string.into_bytes())?;
     }
     Ok(())
+}
+
+fn write_box_points(s: &mut String, x: &i32, y: &i32, z: &i32) {
+    writeln!(s, "v {} {} {}", x - 1, y - 1, z - 1).unwrap();
+    writeln!(s, "v {} {} {}", x - 1, y, z - 1).unwrap();
+    writeln!(s, "v {} {} {}", x, y - 1, z - 1).unwrap();
+    writeln!(s, "v {} {} {}", x, y, z - 1).unwrap();
+    writeln!(s, "v {} {} {}", x - 1, y - 1, z).unwrap();
+    writeln!(s, "v {} {} {}", x - 1, y, z).unwrap();
+    writeln!(s, "v {} {} {}", x, y - 1, z).unwrap();
+    writeln!(s, "v {} {} {}", x, y, z).unwrap();
+}
+
+fn write_box_faces(s: &mut String, i: usize) {
+    writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 4, i * 8 + 3).unwrap();
+    writeln!(s, "f {} {} {} {}", i * 8 + 5, i * 8 + 6, i * 8 + 8, i * 8 + 7).unwrap();
+    writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 6, i * 8 + 5).unwrap();
+    writeln!(s, "f {} {} {} {}", i * 8 + 4, i * 8 + 3, i * 8 + 7, i * 8 + 8).unwrap();
+    writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 5, i * 8 + 7, i * 8 + 3).unwrap();
+    writeln!(s, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4).unwrap();  
 }
 
 fn write_mtl_file(path: &str) -> std::io::Result<()> {
