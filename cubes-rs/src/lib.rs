@@ -27,15 +27,13 @@ impl fmt::Display for PuzzleDense {
 }
 
 pub type Piece = Vec<[i32; 3]>;
-
+pub type Pieces = Vec<Piece>;
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Pieces {
-    pub data: Puzzle,
+pub struct Puzzle {
+    pub data: Pieces,
 }
 
-pub type Puzzle = Vec<Piece>;
-
-pub fn solve(puzzle: Puzzle) -> Vec<PuzzleDense> {
+pub fn solve(puzzle: Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
     let zero = vec![PuzzleDense { data: zeros() }];
 
@@ -94,8 +92,7 @@ fn all_rotations_and_puts(
     solutions
 }
 
-fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
-    let mut all_rots = Vec::new();
+fn rotate_z(all_rotations: &mut Pieces, piece: &Piece) {
     for theta in 0..4 {
         let mut rotations = Vec::new();
         for [x, y, z] in piece {
@@ -106,43 +103,54 @@ fn all_rotations(piece: &Piece) -> Vec<Vec<[i32; 3]>> {
             ];
             rotations.push(rotated_z);
         }
-        all_rots.push(rotations);
+        all_rotations.push(rotations);
+    }
+}
+
+fn rotate_y(all_rotations: &mut Pieces, piece: &Piece) {
+    for theta in 0..4 {
+        let mut rotations = Vec::new();
+        for [x, y, z] in piece {
+            let rotated_yz = [
+                x * COS[theta] + z * SIN[theta],
+                *y,
+                -x * SIN[theta] + z * COS[theta],
+            ];
+            rotations.push(rotated_yz);
+        }
+        all_rotations.push(rotations);
+    }
+} 
+
+fn rotate_x(all_rotations: &mut Pieces, piece: &Piece) {
+    for theta in 0..4 {
+        let mut rotations = Vec::new();
+        for [x, y, z] in piece {
+            let rotated_xyz = [
+                *x,
+                y * COS[theta] - z * SIN[theta],
+                y * SIN[theta] + z * COS[theta],
+            ];
+            rotations.push(rotated_xyz);
+        }
+        all_rotations.push(rotations)
+    }
+}
+
+fn all_rotations(piece: &Piece) -> Pieces {
+    let all_rots = &mut Vec::new();
+    rotate_z(all_rots, piece);
+
+    for piece in all_rots.clone() {
+        rotate_y(all_rots, &piece)
     }
 
-    let mut all_rotss = all_rots.clone();
-    for piece in &all_rots {
-        for theta in 0..4 {
-            let mut rotations = Vec::new();
-            for [x, y, z] in piece {
-                let rotated_yz = [
-                    x * COS[theta] + z * SIN[theta],
-                    *y,
-                    -x * SIN[theta] + z * COS[theta],
-                ];
-                rotations.push(rotated_yz);
-            }
-            all_rotss.push(rotations);
-        }
-    }
-
-    let mut all_rotsss = all_rotss.clone();
-    for piece in &all_rotss {
-        for theta in 0..4 {
-            let mut rotations = Vec::new();
-            for [x, y, z] in piece {
-                let rotated_xyz = [
-                    *x,
-                    y * COS[theta] - z * SIN[theta],
-                    y * SIN[theta] + z * COS[theta],
-                ];
-                rotations.push(rotated_xyz);
-            }
-            all_rotsss.push(rotations)
-        }
+    for piece in all_rots.clone() {
+        rotate_x(all_rots, &piece)
     }
 
     let mut unique_solutions = HashSet::new();
-    let rots = push_to_zero(all_rotsss);
+    let rots = push_to_zero(all_rots.to_vec());
     for mut solution in rots {
         solution.sort();
         unique_solutions.insert(solution);
@@ -214,7 +222,7 @@ fn zeros() -> [[[i32; 3]; 3]; 3] {
     ]
 }
 
-fn push_to_zero(puzzle: Puzzle) -> Puzzle {
+fn push_to_zero(puzzle: Pieces) -> Pieces {
     let mut pieces = Vec::new();
 
     for part in &puzzle {
@@ -271,7 +279,7 @@ enum PuzzleOption {
     Yellow,
 }
 
-pub fn choose_puzzle() -> (Puzzle, String) {
+pub fn choose_puzzle() -> (Pieces, String) {
     let cli = Cli::parse();
 
     let name = match cli.puzzle {
@@ -284,12 +292,12 @@ pub fn choose_puzzle() -> (Puzzle, String) {
         PuzzleOption::Yellow => "yellow".to_string(),
     };
 
-    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", &name)).unwrap()).unwrap();
+    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", &name)).unwrap()).unwrap();
     (decoded.data, name)
 }
 
-pub fn get_puzzle(puzzle: &str) -> Puzzle {
-    let decoded: Pieces = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
+pub fn get_puzzle(puzzle: &str) -> Pieces {
+    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
     decoded.data
 }
 
@@ -345,7 +353,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
     buffer.write_all(&string.into_bytes()).unwrap();
 }
 
-pub fn write_obj_file(puzzle: &Puzzle, puzzle_string: &str) -> std::io::Result<()> {
+pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> std::io::Result<()> {
     match fs::create_dir(format!("target/{}", puzzle_string)) {
         Err(e) if e.kind() == AlreadyExists => { },
         e @ Err(_) => return e,
