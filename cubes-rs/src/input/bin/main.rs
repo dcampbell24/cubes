@@ -4,7 +4,7 @@ use egui::emath::Vec2;
 use std::fs::File;
 use std::io::Write;
 
-use cubes_rs::Pieces;
+use cubes_rs::Puzzle;
 
 fn main() {
     let options = eframe::NativeOptions {
@@ -22,7 +22,7 @@ fn main() {
 struct MyApp {
     name: String,
     cube: [[[bool; 3]; 3]; 3],
-    pieces: Pieces,
+    pieces: Puzzle,
 }
 
 impl Default for MyApp {
@@ -30,7 +30,7 @@ impl Default for MyApp {
         Self {
             name: "".to_owned(),
             cube: [[[false; 3]; 3]; 3],
-            pieces: Pieces { data: Vec::new() },
+            pieces: Puzzle { data: Vec::new() },
         }
     }
 }
