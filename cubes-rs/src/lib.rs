@@ -402,7 +402,7 @@ fn write_box_faces(s: &mut String, i: usize) {
     writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 6, i * 8 + 5).unwrap();
     writeln!(s, "f {} {} {} {}", i * 8 + 4, i * 8 + 3, i * 8 + 7, i * 8 + 8).unwrap();
     writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 5, i * 8 + 7, i * 8 + 3).unwrap();
-    writeln!(s, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4).unwrap();  
+    writeln!(s, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4).unwrap();
 }
 
 fn write_mtl_file(path: &str) -> std::io::Result<()> {
