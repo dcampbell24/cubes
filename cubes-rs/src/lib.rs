@@ -7,7 +7,7 @@ use std::io::Write as _;
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{hash_map, HashMap, HashSet};
 use std::{fmt, fs};
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
@@ -58,11 +58,11 @@ fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
             for y in 0..3 {
                 for z in 0..3 {
                     let value = puzzle.data[x][y][z];
-                    if puzzle_unique.contains_key(&value) {
+                    if let hash_map::Entry::Vacant(e) = puzzle_unique.entry(value) {
+                        piece_count += 1;
+                        e.insert(piece_count);
                         puzzle.data[x][y][z] = puzzle_unique[&value]
                     } else {
-                        piece_count += 1;
-                        puzzle_unique.insert(value, piece_count);
                         puzzle.data[x][y][z] = puzzle_unique[&value]
                     }
                 }
@@ -360,7 +360,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> std::io::Result<(
         Ok(_) => { },
     }
     
-    write_mtl_file(&puzzle_string)?;
+    write_mtl_file(puzzle_string)?;
 
     for (i, piece) in puzzle.iter().enumerate() {
         let mut buffer = File::create(format!("target/{}/piece_{}.obj", puzzle_string, i))?;

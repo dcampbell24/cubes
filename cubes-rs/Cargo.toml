@@ -5,15 +5,26 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.release]
+lto = true
+# codegen-units = 1
+# RUSTFLAGS="-C target-cpu=native" 
+# panic = "abort"
+
 [dependencies]
 bincode = "1.3.3"
 clap = { version = "4.0", features = ["derive"] }
+criterion = { version = "0.3", features = ["html_reports"] }
 eframe = "0.19.0"
 egui = "0.19.0"
 env_logger = "0.9"
 kiss3d = "0.35"
 nalgebra = { version = "0.30", features = ["io", "sparse"] }
 serde = { version = "1", features = ["derive"] }
+
+[[bench]]
+name = "benchmark_cubes"
+harness = false
 
 [[bin]]
 name = "draw"
