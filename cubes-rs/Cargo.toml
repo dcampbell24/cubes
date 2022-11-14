@@ -10,6 +10,7 @@ lto = true
 # codegen-units = 1
 # RUSTFLAGS="-C target-cpu=native" 
 # panic = "abort"
+debug = true
 
 [dependencies]
 bincode = "1.3.3"
