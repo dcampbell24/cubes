@@ -9,7 +9,7 @@ use cubes_rs::Puzzle;
 fn main() {
     let options = eframe::NativeOptions {
         initial_window_size: Some(Vec2 { x: 180., y: 300. }),
-        ..Default::default()    
+        ..Default::default()
     };
 
     eframe::run_native(
@@ -43,7 +43,7 @@ impl eframe::App for MyApp {
                 ui.set_width(100.);
                 ui.text_edit_singleline(&mut self.name);
             });
-            
+
             for x in 0..3 {
                 if x > 0 {
                     ui.horizontal(|ui| {
@@ -53,9 +53,7 @@ impl eframe::App for MyApp {
                 for y in 0..3 {
                     ui.horizontal(|ui| {
                         for z in 0..3 {
-                            if ui.toggle_value(&mut self.cube[x][y][z], "    ").clicked() {
-
-                            }
+                            if ui.toggle_value(&mut self.cube[x][y][z], "    ").clicked() {}
                         }
                     });
                 }

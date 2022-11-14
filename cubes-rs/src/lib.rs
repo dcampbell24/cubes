@@ -3,7 +3,6 @@ use std::fs::File;
 use std::io::ErrorKind::AlreadyExists;
 use std::io::Write as _;
 
-
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 
@@ -67,7 +66,7 @@ fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
                     }
                 }
             }
-        }        
+        }
         puzzles_unique.insert(puzzle);
     }
 
@@ -120,7 +119,7 @@ fn rotate_y(all_rotations: &mut Pieces, piece: &Piece) {
         }
         all_rotations.push(rotations);
     }
-} 
+}
 
 fn rotate_x(all_rotations: &mut Pieces, piece: &Piece) {
     for theta in 0..4 {
@@ -292,19 +291,21 @@ pub fn choose_puzzle() -> (Pieces, String) {
         PuzzleOption::Yellow => "yellow".to_string(),
     };
 
-    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", &name)).unwrap()).unwrap();
+    let decoded: Puzzle =
+        bincode::deserialize(&fs::read(format!("puzzles/{}", &name)).unwrap()).unwrap();
     (decoded.data, name)
 }
 
 pub fn get_puzzle(puzzle: &str) -> Pieces {
-    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
+    let decoded: Puzzle =
+        bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle)).unwrap()).unwrap();
     decoded.data
 }
 
 pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
     let mut buffer = File::create(format!("target/{}/solution.mtl", puzzle_string)).unwrap();
     let mut string = String::new();
-    
+
     writeln!(string, "# Rust generated MTL file").unwrap();
 
     writeln!(string, "newmtl 1").unwrap();
@@ -315,10 +316,10 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
 
     writeln!(string, "newmtl 3").unwrap();
     writeln!(string, "Kd 0.0 0.0 1.0").unwrap();
-    
+
     writeln!(string, "newmtl 4").unwrap();
     writeln!(string, "Kd 1.0 1.0 0.0").unwrap();
-    
+
     writeln!(string, "newmtl 5").unwrap();
     writeln!(string, "Kd 0.0 1.0 1.0").unwrap();
 
@@ -335,8 +336,8 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
 
     let mut buffer = File::create(format!("target/{}/solution.obj", puzzle_string)).unwrap();
     let mut string = String::new();
-        
-    writeln!(string, "# Rust generated OBJ file.").unwrap();        
+
+    writeln!(string, "# Rust generated OBJ file.").unwrap();
     writeln!(string, "mtllib solution.mtl").unwrap();
 
     for x in 0..3 {
@@ -345,7 +346,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
                 let color = puzzle.data[x as usize][y as usize][z as usize];
                 writeln!(string, "usemtl {}", color).unwrap();
                 write_box_points(&mut string, &x, &y, &z);
-                write_box_faces( &mut string, (x*9 + y*3 + z) as usize);
+                write_box_faces(&mut string, (x * 9 + y * 3 + z) as usize);
             }
         }
     }
@@ -355,18 +356,18 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) {
 
 pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> std::io::Result<()> {
     match fs::create_dir(format!("target/{}", puzzle_string)) {
-        Err(e) if e.kind() == AlreadyExists => { },
+        Err(e) if e.kind() == AlreadyExists => {}
         e @ Err(_) => return e,
-        Ok(_) => { },
+        Ok(_) => {}
     }
-    
+
     write_mtl_file(puzzle_string)?;
 
     for (i, piece) in puzzle.iter().enumerate() {
         let mut buffer = File::create(format!("target/{}/piece_{}.obj", puzzle_string, i))?;
         let mut string = String::new();
-            
-        writeln!(string, "# Rust generated OBJ file.").unwrap();        
+
+        writeln!(string, "# Rust generated OBJ file.").unwrap();
         writeln!(string, "mtllib piece.mtl").unwrap();
         writeln!(string, "usemtl {}", 0).unwrap();
 
@@ -394,6 +395,7 @@ fn write_box_points(s: &mut String, x: &i32, y: &i32, z: &i32) {
     writeln!(s, "v {} {} {}", x, y, z).unwrap();
 }
 
+#[rustfmt::skip]
 fn write_box_faces(s: &mut String, i: usize) {
     writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 4, i * 8 + 3).unwrap();
     writeln!(s, "f {} {} {} {}", i * 8 + 5, i * 8 + 6, i * 8 + 8, i * 8 + 7).unwrap();
@@ -406,10 +408,10 @@ fn write_box_faces(s: &mut String, i: usize) {
 fn write_mtl_file(path: &str) -> std::io::Result<()> {
     let mut buffer = File::create(format!("target/{}/piece.mtl", path))?;
     let mut string = String::new();
-    
+
     writeln!(string, "# Rust generated MTL file").unwrap();
     writeln!(string, "newmtl 0").unwrap();
-    
+
     match path {
         "blue" => writeln!(string, "Kd 0.0 0.0 1.0").unwrap(),
         "green" => todo!(),

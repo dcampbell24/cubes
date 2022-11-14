@@ -12,13 +12,13 @@ use na::{Translation, UnitQuaternion, Vector3};
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-   /// Solve the minotaur problem.
-   #[arg(short, long)]
-   minotaur: bool,
+    /// Solve the minotaur problem.
+    #[arg(short, long)]
+    minotaur: bool,
 
-   /// Solve the planes problem.
-   #[arg(short, long)]
-   planes: bool,
+    /// Solve the planes problem.
+    #[arg(short, long)]
+    planes: bool,
 }
 
 fn main() {
@@ -36,7 +36,9 @@ fn main() {
         let r = (i % 3) as f32 * 0.1 - 0.1;
         let c = (i / 9) as f32 * 0.1 - 0.1;
         let d = (i % 9) as f32 * 0.05 - 0.1;
-        cubes[i].append_translation(&Translation { vector: vector!(r, c, d) });
+        cubes[i].append_translation(&Translation {
+            vector: vector!(r, c, d),
+        });
     }
 
     if args.minotaur {
@@ -52,7 +54,6 @@ fn main() {
         cubes[7].set_color(0.0, 1.0, 0.0);
         cubes[8].set_color(0.0, 0.0, 1.0);
 
-
         cubes[9].set_color(1.0, 1.0, 0.0);
         cubes[10].set_color(1.0, 0.0, 0.0);
         cubes[11].set_color(0.0, 1.0, 1.0);
@@ -64,7 +65,6 @@ fn main() {
         cubes[15].set_color(0.0, 1.0, 0.0);
         cubes[16].set_color(0.0, 0.0, 1.0);
         cubes[17].set_color(0.0, 0.0, 1.0);
-
 
         cubes[18].set_color(1.0, 0.0, 1.0);
         cubes[19].set_color(1.0, 0.0, 1.0);
@@ -93,7 +93,7 @@ fn main() {
 
     let rot1 = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), 0.01);
     let rot2 = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.01);
-    
+
     for _ in 0..1600 {
         if window.render() {
             for piece in cubes.iter_mut().take(27) {
@@ -108,5 +108,5 @@ fn main() {
             }
         }
     }
-    while window.render() { }
+    while window.render() {}
 }
