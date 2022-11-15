@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use cubes_rs::{choose_puzzle, solve, write_obj_file, write_obj_file_solution};
 
-fn main() -> Result<(), cubes_rs::Error>{
+fn main() -> Result<(), cubes_rs::Error> {
     let now = Instant::now();
 
     let (puzzle, puzzle_string) = choose_puzzle()?;

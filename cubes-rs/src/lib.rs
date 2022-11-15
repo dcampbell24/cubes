@@ -315,14 +315,12 @@ pub fn choose_puzzle() -> Result<(Pieces, String), Error> {
         PuzzleOption::Yellow => "yellow".to_string(),
     };
 
-    let decoded: Puzzle =
-        bincode::deserialize(&fs::read(format!("puzzles/{}", &name))?)?;
+    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", &name))?)?;
     Ok((decoded.data, name))
 }
 
 pub fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
-    let decoded: Puzzle =
-        bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle))?)?;
+    let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", puzzle))?)?;
     Ok(decoded.data)
 }
 
