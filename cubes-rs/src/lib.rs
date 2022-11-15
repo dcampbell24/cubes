@@ -1,12 +1,11 @@
-use std::fmt::Write;
-use std::fs::File;
-use std::io::ErrorKind::AlreadyExists;
-use std::io::Write as _;
-
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 
 use std::collections::{hash_map, HashMap, HashSet};
+use std::fmt::Write;
+use std::fs::File;
+use std::io::ErrorKind::AlreadyExists;
+use std::io::Write as _;
 use std::{fmt, fs};
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
@@ -24,6 +23,7 @@ impl From<bincode::Error> for Error {
         Error::BincodeError(other)
     }
 }
+
 impl From<std::fmt::Error> for Error {
     fn from(other: std::fmt::Error) -> Error {
         Error::FmtError(other)
@@ -58,18 +58,25 @@ pub struct Puzzle {
 
 pub fn solve(puzzle: Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
-    let zero = vec![PuzzleDense { data: zeros() }];
 
     let mut solutions = Vec::new();
     for (i, piece) in pieces.iter().enumerate() {
         if i == 0 {
-            solutions = all_puts(zero.clone(), (i + 1) as i32, piece);
+            solutions = all_puts(vec![PuzzleDense { data: zeros() }], (i + 1) as i32, piece);
         } else {
             solutions = all_rotations_and_puts(solutions.clone(), (i + 1) as i32, piece);
         }
     }
 
     unique_pieces(solutions)
+}
+
+fn zeros() -> [[[i32; 3]; 3]; 3] {
+    [
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+    ]
 }
 
 fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
@@ -235,14 +242,6 @@ fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -
     }
 
     all_solutions
-}
-
-fn zeros() -> [[[i32; 3]; 3]; 3] {
-    [
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    ]
 }
 
 fn push_to_zero(puzzle: Pieces) -> Pieces {
