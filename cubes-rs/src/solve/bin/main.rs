@@ -18,7 +18,7 @@ fn main() -> Result<(), cubes_rs::Error> {
     let elapsed_time = now.elapsed();
     log::info!(
         "Running the program took {} seconds.",
-        elapsed_time.as_micros() as f64 / 1_000_000.0
+        elapsed_time.as_secs_f64(),
     );
 
     Ok(())
