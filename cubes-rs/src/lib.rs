@@ -305,13 +305,13 @@ pub fn choose_puzzle() -> Result<(Pieces, String), Error> {
     let cli = Cli::parse();
 
     let name = match cli.puzzle {
-        PuzzleOption::Blue => "blue".to_string(),
+        PuzzleOption::Blue => "blue".into(),
         PuzzleOption::Green => todo!(),
-        PuzzleOption::Minotaur => "minotaur".to_string(),
-        PuzzleOption::Orange => "orange".to_string(),
-        PuzzleOption::Red => "red".to_string(),
-        PuzzleOption::White => "white".to_string(),
-        PuzzleOption::Yellow => "yellow".to_string(),
+        PuzzleOption::Minotaur => "minotaur".into(),
+        PuzzleOption::Orange => "orange".into(),
+        PuzzleOption::Red => "red".into(),
+        PuzzleOption::White => "white".into(),
+        PuzzleOption::Yellow => "yellow".into(),
     };
 
     let decoded: Puzzle = bincode::deserialize(&fs::read(format!("puzzles/{}", &name))?)?;
