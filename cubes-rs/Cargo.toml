@@ -7,9 +7,12 @@ edition = "2021"
 
 [profile.release]
 lto = true
-# codegen-units = 1
-# RUSTFLAGS="-C target-cpu=native" 
 # panic = "abort"
+# opt-level = "z" // optimize for size
+# strip = true
+# codegen-units = 1
+
+# RUSTFLAGS="-C target-cpu=native" 
 # debug = true
 
 [dependencies]
