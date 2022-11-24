@@ -1,8 +1,8 @@
 use std::time::Instant;
 
-use cubes_rs::{choose_puzzle, solve, write_obj_file, write_obj_file_solution};
+use cubes::{choose_puzzle, solve, write_obj_file, write_obj_file_solution};
 
-fn main() -> Result<(), cubes_rs::Error> {
+fn main() -> Result<(), cubes::Error> {
     let now = Instant::now();
     env_logger::init();
 

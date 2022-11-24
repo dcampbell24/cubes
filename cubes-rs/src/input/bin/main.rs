@@ -4,7 +4,7 @@ use egui::emath::Vec2;
 use std::fs::File;
 use std::io::Write;
 
-use cubes_rs::Puzzle;
+use cubes::Puzzle;
 
 fn main() {
     let options = eframe::NativeOptions {
