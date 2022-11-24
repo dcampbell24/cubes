@@ -2,9 +2,8 @@ Cubes
 ======
 
 Applications for determining how to put a cube together and for creating
-visualizations of the solution.  Currently, only the Go version generates OBJ
-files for use with the viewers; however, the Fortran version is around a
-thousand times faster.
+visualizations of the solution. The Rust version is superior to the
+others.
 
 ![Minotaur Cube](https://github.com/davekong/cubes/raw/master/cube.png "One of two minotaur cube solutions")
 
@@ -13,6 +12,11 @@ Directories
 
 * cubes-go: Go version of the solver. Reads puzzles in json form and can be
   downloaded with `go get github.com/davekong/cubes/cubes-go`
+
+* cubes-rs: Rust version of the solver, a drawing program, and an input
+  program. Reads the puzzles in bincode format which the input program
+  saves the pieces as. Writes the pieces and one of the solutions as OBJ
+  files. 
 
 * fortran: Fortran version of the solver. Solves puzzles in the format of the
   files in the puzzles directory.
