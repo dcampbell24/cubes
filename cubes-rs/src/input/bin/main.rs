@@ -1,10 +1,11 @@
+use directories::ProjectDirs;
 use eframe::egui;
 use egui::emath::Vec2;
 
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::Write;
 
-use cubes::Puzzle;
+use cubes::{Error, Puzzle};
 
 fn main() {
     let options = eframe::NativeOptions {
@@ -78,9 +79,17 @@ impl eframe::App for MyApp {
                 }
 
                 if ui.button("save all").clicked() {
-                    let mut buffer = File::create(format!("puzzles/{}", self.name)).unwrap();
-                    let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
-                    buffer.write_all(&encoded).unwrap();
+                    if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
+                        let dir = proj_dirs.data_dir();
+                        let path = dir.join("puzzles");
+                        fs::create_dir_all(&path).unwrap();
+            
+                        let mut buffer = File::create(path.join(&self.name)).unwrap();
+                        let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
+                        buffer.write_all(&encoded).unwrap();
+                    } else {
+                        return Err(Error::DirectoryError).unwrap();
+                    }
                 }
             });
         });

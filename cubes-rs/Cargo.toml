@@ -8,7 +8,7 @@ keywords = ["cubes"]
 homepage = "https://github.com/dcampbell24/cubes"
 # documentation = "https://docs.rs/cubes"
 repository = "https://github.com/dcampbell24/cubes/tree/master/cubes-rs"
-
+readme = "README.md"
 
 [profile.release]
 lto = true
@@ -20,10 +20,14 @@ lto = true
 # RUSTFLAGS="-C target-cpu=native" 
 # debug = true
 
+[build-dependencies]
+directories = "4"
+
 [dependencies]
 bincode = "1"
 clap = { version = "4.0", features = ["derive"] }
 criterion = { version = "0.3", features = ["html_reports"] }
+directories = "4"
 eframe = "0.19"
 egui = "0.19"
 env_logger = "0.9"
