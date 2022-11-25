@@ -17,4 +17,4 @@ $HOME/Library/Application Support/Cubes
 {FOLDERID_RoamingAppData}\Cubes\data
 ```
 
-![Minotaur Cube](https://github.com/dcampbell24/cubes/blob/master/cubes-rs/g3dviewer-solution.obj.png "One of two minotaur cube solutions")
+![Minotaur Cube](https://raw.githubusercontent.com/dcampbell24/cubes/master/cubes-rs/g3dviewer-solution.obj.png "One of two minotaur cube solutions")
