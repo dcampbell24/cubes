@@ -1,4 +1,3 @@
-use clap::{Parser, ValueEnum};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
@@ -275,63 +274,6 @@ fn push_to_zero(puzzle: Pieces) -> Pieces {
     pieces
 }
 
-/// Program to display the 3x3 cube solution(s).
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    /// What puzzle to solve.
-    #[arg(value_enum, default_value_t = PuzzleOption::Minotaur)]
-    puzzle: PuzzleOption,
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum PuzzleOption {
-    /// blue
-    Blue,
-    /// green
-    Green,
-    /// minotaur
-    Minotaur,
-    /// orange
-    Orange,
-    /// red
-    Red,
-    /// white
-    White,
-    /// yellow
-    Yellow,
-}
-
-pub fn choose_puzzle() -> Result<(Pieces, String), Error> {
-    let cli = Cli::parse();
-
-    let name = match cli.puzzle {
-        PuzzleOption::Blue => "blue".to_string(),
-        PuzzleOption::Green => todo!(),
-        PuzzleOption::Minotaur => "minotaur".into(),
-        PuzzleOption::Orange => "orange".into(),
-        PuzzleOption::Red => "red".into(),
-        PuzzleOption::White => "white".into(),
-        PuzzleOption::Yellow => "yellow".into(),
-    };
-
-    match get_puzzle(&name) {
-        Ok(data) => Ok((data, name)),
-        Err(_) => Err(Error::DirectoryError),
-    }
-}
-
-pub fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join("puzzles");
-        let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(&puzzle))?)?;
-        Ok(decoded.data)
-    } else {
-        Err(Error::DirectoryError)
-    }
-}
-
 fn write_mtl_file_solution(puzzle_string: &str) -> Result<(), Error> {
     let mut string = String::new();
 
@@ -361,7 +303,7 @@ fn write_mtl_file_solution(puzzle_string: &str) -> Result<(), Error> {
     writeln!(string, "newmtl 8")?;
     writeln!(string, "Kd 0.3 0.3 0.3")?;
 
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
+    if let Some(proj_dirs) = project_dir_cubes() {
         let dir = proj_dirs.data_dir();
         let path = dir.join(puzzle_string);
         fs::create_dir_all(&path)?;
@@ -393,7 +335,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> Res
         }
     }
 
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
+    if let Some(proj_dirs) = project_dir_cubes() {
         let dir = proj_dirs.data_dir();
         let path = dir.join(puzzle_string);
         fs::create_dir_all(&path)?;
@@ -424,7 +366,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> Result<(), Error>
             write_box_faces(&mut string, i)?;
         }
 
-        if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
+        if let Some(proj_dirs) = project_dir_cubes() {
             let dir = proj_dirs.data_dir();
             let path = dir.join(puzzle_string);
             fs::create_dir_all(&path)?;
@@ -474,10 +416,11 @@ fn write_mtl_file(color: &str) -> Result<(), Error> {
         "red" => writeln!(string, "Kd 1.0 0.0 0.0")?,
         "white" => writeln!(string, "Kd 0.6 0.6 0.6")?,
         "yellow" => writeln!(string, "Kd 1.0 1.0 0.0")?,
-        _ => unreachable!(),
+        // other
+        _ => writeln!(string, "Kd 0.6 0.6 0.6")?,
     }
 
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
+    if let Some(proj_dirs) = project_dir_cubes() {
         let dir = proj_dirs.data_dir();
         let path = dir.join(color);
         fs::create_dir_all(&path)?;
@@ -488,4 +431,8 @@ fn write_mtl_file(color: &str) -> Result<(), Error> {
     } else {
         Err(Error::DirectoryError)
     }
+}
+
+pub fn project_dir_cubes() -> Option<ProjectDirs> {
+    ProjectDirs::from("", "", "Cubes")
 }
