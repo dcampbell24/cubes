@@ -39,10 +39,6 @@ name = "benchmark_cubes"
 harness = false
 
 [[bin]]
-name = "draw"
-path = "src/draw/bin/main.rs"
-
-[[bin]]
 name = "input"
 path = "src/input/bin/main.rs"
 
