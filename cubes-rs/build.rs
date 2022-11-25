@@ -6,7 +6,6 @@ use std::path::Path;
 
 fn main() -> Result<(), Error> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
-        // Linux: /home/ubuntu/.local/share/cubes
         let dir = proj_dirs.data_dir();
         let path = dir.join("puzzles");
         fs::create_dir_all(&path)?;
