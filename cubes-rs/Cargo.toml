@@ -31,9 +31,7 @@ directories = "4"
 eframe = "0.19"
 egui = "0.19"
 env_logger = "0.9"
-kiss3d = "0.35"
 log = "0.4"
-nalgebra = { version = "0.30", features = ["io", "sparse"] }
 serde = { version = "1", features = ["derive"] }
 
 [[bench]]

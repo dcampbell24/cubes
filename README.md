@@ -13,10 +13,10 @@ Directories
 * cubes-go: Go version of the solver. Reads puzzles in json form and can be
   downloaded with `go get github.com/davekong/cubes/cubes-go`
 
-* cubes-rs: Rust version of the solver, a drawing program, and an input
-  program. Reads the puzzles in bincode format which the input program
-  saves the pieces as. Writes the pieces and one of the solutions as OBJ
-  files. All writes are to the local data directory.
+* cubes-rs: Rust version of the solver and an input program. Reads the
+  puzzles in bincode format which the input program saves the pieces as.
+  Writes the pieces and one of the solutions as OBJ files. All writes
+  are to the local data directory.
 
 * fortran: Fortran version of the solver. Solves puzzles in the format of the
   files in the puzzles directory.
