@@ -19,7 +19,7 @@ fn main() -> Result<(), cubes::Error> {
     let (puzzle, puzzle_string) = choose_puzzle(cli)?;
     write_obj_file(&puzzle, &puzzle_string)?;
 
-    let solutions = solve(puzzle);
+    let solutions = solve(&puzzle);
     for solution in &solutions {
         println!("{:}", solution);
     }
@@ -42,7 +42,7 @@ fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
         }
     } else {
         let name = match cli.puzzle {
-            PuzzleOption::Blue => "blue".to_string(),
+            PuzzleOption::Blue => "blue".to_owned(),
             PuzzleOption::Green => todo!(),
             PuzzleOption::Minotaur => "minotaur".into(),
             PuzzleOption::Orange => "orange".into(),

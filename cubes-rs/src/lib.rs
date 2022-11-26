@@ -56,15 +56,15 @@ pub struct Puzzle {
     pub data: Pieces,
 }
 
-pub fn solve(puzzle: Pieces) -> Vec<PuzzleDense> {
+pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
 
-    let mut solutions = Vec::new();
+    let mut solutions = vec![PuzzleDense { data: zeros() }];
     for (i, piece) in pieces.iter().enumerate() {
         if i == 0 {
-            solutions = all_puts(vec![PuzzleDense { data: zeros() }], (i + 1) as i32, piece);
+            solutions = all_puts(&solutions, (i + 1) as i32, piece);
         } else {
-            solutions = all_rotations_and_puts(solutions.clone(), (i + 1) as i32, piece);
+            solutions = all_rotations_and_puts(&solutions, (i + 1) as i32, piece);
         }
     }
 
@@ -109,13 +109,13 @@ fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
 }
 
 fn all_rotations_and_puts(
-    already_placed: Vec<PuzzleDense>,
+    already_placed: &Vec<PuzzleDense>,
     piece_count: i32,
     piece: &Piece,
 ) -> Vec<PuzzleDense> {
     let mut solutions = Vec::new();
     for rotation in all_rotations(piece) {
-        for s in all_puts(already_placed.clone(), piece_count, &rotation) {
+        for s in all_puts(&already_placed, piece_count, &rotation) {
             solutions.push(s);
         }
     }
@@ -180,7 +180,7 @@ fn all_rotations(piece: &Piece) -> Pieces {
     }
 
     let mut unique_solutions = HashSet::new();
-    let rots = push_to_zero(all_rots.to_vec());
+    let rots = push_to_zero(&all_rots);
     for mut solution in rots {
         solution.sort();
         unique_solutions.insert(solution);
@@ -212,7 +212,7 @@ fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
     (max_x, max_y, max_z)
 }
 
-fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
+fn all_puts(already_placed: &Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
     let mut all_solutions = Vec::new();
     let (max_x, max_y, max_z) = max_xyz(piece);
 
@@ -244,10 +244,10 @@ fn all_puts(already_placed: Vec<PuzzleDense>, piece_count: i32, piece: &Piece) -
     all_solutions
 }
 
-fn push_to_zero(puzzle: Pieces) -> Pieces {
+fn push_to_zero(puzzle: &Pieces) -> Pieces {
     let mut pieces = Vec::new();
 
-    for part in &puzzle {
+    for part in puzzle {
         let mut piece = Vec::new();
         let mut min_x = 99;
         let mut min_y = 99;

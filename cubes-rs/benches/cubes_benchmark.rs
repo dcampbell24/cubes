@@ -16,7 +16,7 @@ fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
 }
 
 fn minotaur() {
-    cubes::solve(get_puzzle("minotaur").unwrap());
+    cubes::solve(&get_puzzle("minotaur").unwrap());
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
