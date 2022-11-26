@@ -62,7 +62,7 @@ fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
     if let Some(proj_dirs) = project_dir_cubes() {
         let dir = proj_dirs.data_dir();
         let path = dir.join("puzzles");
-        let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(&puzzle))?)?;
+        let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(puzzle))?)?;
         Ok(decoded.data)
     } else {
         Err(Error::DirectoryError)

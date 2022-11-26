@@ -109,13 +109,13 @@ fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
 }
 
 fn all_rotations_and_puts(
-    already_placed: &Vec<PuzzleDense>,
+    already_placed: &[PuzzleDense],
     piece_count: i32,
     piece: &Piece,
 ) -> Vec<PuzzleDense> {
     let mut solutions = Vec::new();
     for rotation in all_rotations(piece) {
-        for s in all_puts(&already_placed, piece_count, &rotation) {
+        for s in all_puts(already_placed, piece_count, &rotation) {
             solutions.push(s);
         }
     }
@@ -180,7 +180,7 @@ fn all_rotations(piece: &Piece) -> Pieces {
     }
 
     let mut unique_solutions = HashSet::new();
-    let rots = push_to_zero(&all_rots);
+    let rots = push_to_zero(all_rots);
     for mut solution in rots {
         solution.sort();
         unique_solutions.insert(solution);
@@ -213,7 +213,7 @@ fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
 }
 
 fn all_puts(
-    already_placed: &Vec<PuzzleDense>,
+    already_placed: &[PuzzleDense],
     piece_count: i32,
     piece: &Piece,
 ) -> Vec<PuzzleDense> {
@@ -223,7 +223,7 @@ fn all_puts(
     for x_step in 0..3 - max_x {
         for y_step in 0..3 - max_y {
             for z_step in 0..3 - max_z {
-                let already_placed = already_placed.clone();
+                let already_placed = already_placed.to_owned();
                 'next_piece: for mut puzzle in already_placed {
                     for [x, y, z] in piece {
                         if puzzle.data[(x + x_step) as usize][(y + y_step) as usize]
