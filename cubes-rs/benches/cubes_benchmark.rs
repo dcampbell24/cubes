@@ -2,7 +2,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 
 use std::fs;
 
-use cubes::{Error, Pieces, Puzzle, project_dir_cubes};
+use cubes::{project_dir_cubes, Error, Pieces, Puzzle};
 
 fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
     if let Some(proj_dirs) = project_dir_cubes() {

@@ -3,8 +3,8 @@ use clap::{Parser, ValueEnum};
 use std::time::Instant;
 use std::{fs, io};
 
-use cubes::{Error, Pieces, Puzzle};
 use cubes::{project_dir_cubes, solve, write_obj_file, write_obj_file_solution};
+use cubes::{Error, Pieces, Puzzle};
 
 fn main() -> Result<(), cubes::Error> {
     let now = Instant::now();
@@ -38,7 +38,7 @@ fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
     if let Some(pieces) = cli.pieces {
         match get_puzzle(&pieces) {
             Ok(data) => Ok((data, pieces)),
-            Err(_) => Err(Error::DirectoryError), 
+            Err(_) => Err(Error::DirectoryError),
         }
     } else {
         let name = match cli.puzzle {
@@ -53,7 +53,7 @@ fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
 
         match get_puzzle(&name) {
             Ok(data) => Ok((data, name)),
-            Err(_) => Err(Error::DirectoryError),        
+            Err(_) => Err(Error::DirectoryError),
         }
     }
 }
@@ -69,14 +69,14 @@ fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
     }
 }
 
-fn list_puzzles() -> Result<(), Error>{
+fn list_puzzles() -> Result<(), Error> {
     if let Some(proj_dirs) = project_dir_cubes() {
         let dir = proj_dirs.data_dir();
         let path = dir.join("puzzles");
         let mut entries = fs::read_dir(path)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, io::Error>>()?;
-        
+
         entries.sort();
         for entry in entries {
             println!("{:?}", entry.file_name().expect("there is a file"));

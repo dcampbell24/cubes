@@ -83,7 +83,7 @@ impl eframe::App for MyApp {
                         let dir = proj_dirs.data_dir();
                         let path = dir.join("puzzles");
                         fs::create_dir_all(&path).unwrap();
-            
+
                         let mut buffer = File::create(path.join(&self.name)).unwrap();
                         let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
                         buffer.write_all(&encoded).unwrap();
