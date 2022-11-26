@@ -49,6 +49,7 @@ fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
             PuzzleOption::Red => "red".into(),
             PuzzleOption::White => "white".into(),
             PuzzleOption::Yellow => "yellow".into(),
+            PuzzleOption::Towo => "towo".into(),
         };
 
         match get_puzzle(&name) {
@@ -120,4 +121,6 @@ enum PuzzleOption {
     White,
     /// yellow
     Yellow,
+    /// Towo
+    Towo,
 }

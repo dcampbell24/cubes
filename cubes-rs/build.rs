@@ -15,6 +15,7 @@ fn main() -> Result<(), Error> {
         fs::copy(Path::new("puzzles").join("red"), path.join("red"))?;
         fs::copy(Path::new("puzzles").join("white"), path.join("white"))?;
         fs::copy(Path::new("puzzles").join("yellow"), path.join("yellow"))?;
+        fs::copy(Path::new("puzzles").join("towo"), path.join("towo"))?;
     }
 
     Ok(())
