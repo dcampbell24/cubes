@@ -212,11 +212,7 @@ fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
     (max_x, max_y, max_z)
 }
 
-fn all_puts(
-    already_placed: &[PuzzleDense],
-    piece_count: i32,
-    piece: &Piece,
-) -> Vec<PuzzleDense> {
+fn all_puts(already_placed: &[PuzzleDense], piece_count: i32, piece: &Piece) -> Vec<PuzzleDense> {
     let mut all_solutions = Vec::new();
     let (max_x, max_y, max_z) = max_xyz(piece);
 
