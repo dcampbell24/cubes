@@ -37,11 +37,3 @@ serde = { version = "1", features = ["derive"] }
 [[bench]]
 name = "cubes_benchmark"
 harness = false
-
-[[bin]]
-name = "cubes_input"
-path = "src/input/bin/main.rs"
-
-[[bin]]
-name = "cubes_solve"
-path = "src/solve/bin/main.rs"
