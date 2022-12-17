@@ -5,7 +5,7 @@ use std::io::Error;
 use std::path::Path;
 
 fn main() -> Result<(), Error> {
-    if std::env::var("DOCS_RS").is_err() {
+    if std::env::var("DOCS_RS").is_ok() {
         return Ok(());
     }
 
