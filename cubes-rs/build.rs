@@ -5,6 +5,10 @@ use std::io::Error;
 use std::path::Path;
 
 fn main() -> Result<(), Error> {
+    if std::env::var("DOCS_RS").is_err() {
+        return Ok(());
+    }
+
     if let Some(proj_dirs) = ProjectDirs::from("", "", "Cubes") {
         let dir = proj_dirs.data_dir();
         let path = dir.join("puzzles");
