@@ -1,5 +1,5 @@
+use iced::widget::{button, column, radio, row, text_input};
 use iced::widget::{Column, Row};
-use iced::widget::{button, checkbox, column, row, text_input};
 use iced::{window, Alignment, Element, Sandbox, Settings};
 
 use std::fs::{self, File};
@@ -10,7 +10,7 @@ use cubes::{project_dir_cubes, Puzzle};
 pub fn main() -> iced::Result {
     PolycubePieces::run(Settings {
         window: window::Settings {
-            size: (200, 400),
+            size: (210, 500),
             ..Default::default()
         },
         ..Default::default()
@@ -36,7 +36,7 @@ impl Default for PolycubePieces {
 #[derive(Clone, Debug)]
 enum Message {
     NameChanged(String),
-    SelectedPiece(bool),
+    SelectedPiece(usize),
     SavePiecePressed,
     SaveAllPressed,
 }
@@ -56,9 +56,12 @@ impl Sandbox for PolycubePieces {
         match message {
             Message::NameChanged(name) => {
                 self.name = name;
-            },
-            Message::SelectedPiece(bool) => {
-                // fixme
+            }
+            Message::SelectedPiece(i) => {
+                let x = i / 9;
+                let y = (i / 3) % 3;
+                let z = i % 3;
+                self.cube[x][y][z] = !self.cube[x][y][z];
             }
             Message::SavePiecePressed => {
                 self.pieces.data.push(Vec::new());
@@ -75,7 +78,7 @@ impl Sandbox for PolycubePieces {
                     }
                 }
                 println!();
-            },
+            }
             Message::SaveAllPressed => {
                 let proj_dirs = project_dir_cubes().expect("expected a cubes directory");
                 let dir = proj_dirs.data_dir();
@@ -90,22 +93,24 @@ impl Sandbox for PolycubePieces {
     }
 
     fn view(&self) -> Element<Message> {
-        let name = row![
-            "Name: ",
-            text_input("", &self.name, Message::NameChanged),
-        ]
-        .padding(10)
-        .align_items(Alignment::Start);
+        let name = row!["Name: ", text_input("", &self.name, Message::NameChanged),]
+            .padding(10)
+            .align_items(Alignment::Start);
 
         let mut pieces_matrix = Vec::new();
         for x in 0..3 {
             if x > 0 {
-                pieces_matrix.push(Row::new().into());
+                pieces_matrix.push(Row::new().padding(10).into());
             }
             for y in 0..3 {
                 let mut row = Vec::new();
                 for z in 0..3 {
-                    row.push(checkbox("", self.cube[x][y][z], Message::SelectedPiece).into());
+                    let i = 9 * x + 3 * y + z;
+                    let mut cube_selected = None;
+                    if self.cube[x][y][z] {
+                        cube_selected = Some(i);
+                    }
+                    row.push(radio("", i, cube_selected, Message::SelectedPiece).into());
                 }
                 pieces_matrix.push(Row::with_children(row).into());
             }

@@ -28,8 +28,6 @@ bincode = "1"
 clap = { version = "4.0", features = ["derive"] }
 criterion = { version = "0.3", features = ["html_reports"] }
 directories = "4"
-eframe = "0.19"
-egui = "0.19"
 env_logger = "0.9"
 iced = "0.6.0"
 log = "0.4"
