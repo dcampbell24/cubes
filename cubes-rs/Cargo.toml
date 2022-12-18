@@ -31,6 +31,7 @@ directories = "4"
 eframe = "0.19"
 egui = "0.19"
 env_logger = "0.9"
+iced = "0.6.0"
 log = "0.4"
 serde = { version = "1", features = ["derive"] }
 
