@@ -562,7 +562,7 @@ checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
 
 [[package]]
 name = "cubes"
-version = "2.5.0"
+version = "2.6.0"
 dependencies = [
  "bincode",
  "clap 4.0.26",
