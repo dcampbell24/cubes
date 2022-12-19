@@ -23,6 +23,32 @@ struct PolycubePieces {
     pieces: Puzzle,
 }
 
+impl PolycubePieces {
+    fn sum_cubes(&self) -> i32 {
+        let mut sum = 0;
+        for x in 0..3 {
+            for y in 0..3 {
+                for z in 0..3 {
+                    if self.cube[x][y][z] {
+                        sum += 1;
+                    }
+                }
+            }
+        }
+        sum
+    }
+
+    fn sum_pieces(&self) -> i32 {
+        let mut sum = 0;
+        for piece in &self.pieces.data {
+            for _cube in piece {
+                sum += 1;
+            }
+        }
+        sum
+    }
+}
+
 impl Default for PolycubePieces {
     fn default() -> Self {
         Self {
@@ -117,8 +143,16 @@ impl Sandbox for PolycubePieces {
         }
         let pieces_col = Column::with_children(pieces_matrix).padding(10).spacing(10);
 
-        let save_piece = button("Save Piece").on_press(Message::SavePiecePressed);
-        let save_all = button("Save All").on_press(Message::SaveAllPressed);
+        let save_piece = if self.sum_pieces() >= 27 || self.sum_cubes() < 1 {
+            button("Save Piece")
+        } else {
+            button("Save Piece").on_press(Message::SavePiecePressed)
+        };
+        let save_all = if self.sum_pieces() == 27 {
+            button("Save All").on_press(Message::SaveAllPressed)
+        } else {
+            button("Save All")
+        };
         let buttons = row![save_piece, save_all]
             .padding(10)
             .spacing(10)
