@@ -114,6 +114,7 @@ impl Sandbox for PolycubePieces {
                 let mut buffer = File::create(path.join(&self.name)).unwrap();
                 let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
                 buffer.write_all(&encoded).unwrap();
+                println!("saved {}", self.name);
             }
         }
     }
@@ -143,15 +144,18 @@ impl Sandbox for PolycubePieces {
         }
         let pieces_col = Column::with_children(pieces_matrix).padding(10).spacing(10);
 
-        let save_piece = if self.sum_pieces() >= 27 || self.sum_cubes() < 1 {
+        let save_piece = if self.sum_pieces() >= 27
+            || self.sum_cubes() < 1
+            || self.sum_cubes() + self.sum_pieces() > 27
+        {
             button("Save Piece")
         } else {
             button("Save Piece").on_press(Message::SavePiecePressed)
         };
-        let save_all = if self.sum_pieces() == 27 {
-            button("Save All").on_press(Message::SaveAllPressed)
-        } else {
+        let save_all = if self.sum_pieces() != 27 || self.name.is_empty() {
             button("Save All")
+        } else {
+            button("Save All").on_press(Message::SaveAllPressed)
         };
         let buttons = row![save_piece, save_all]
             .padding(10)
