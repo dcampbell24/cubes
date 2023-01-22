@@ -72,11 +72,7 @@ pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
 }
 
 fn zeros() -> [[[i32; 3]; 3]; 3] {
-    [
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    ]
+    [[[0; 3]; 3]; 3]
 }
 
 fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
