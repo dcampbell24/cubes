@@ -49,6 +49,27 @@ impl fmt::Display for PuzzleDense {
     }
 }
 
+impl PuzzleDense {
+    fn make_standard(&mut self) {
+        let mut puzzle_unique: HashMap<i32, i32> = HashMap::new();
+        let mut piece_count = 0;
+        for x in 0..3 {
+            for y in 0..3 {
+                for z in 0..3 {
+                    let value = self.data[x][y][z];
+                    if let hash_map::Entry::Vacant(e) = puzzle_unique.entry(value) {
+                        piece_count += 1;
+                        e.insert(piece_count);
+                        self.data[x][y][z] = puzzle_unique[&value]
+                    } else {
+                        self.data[x][y][z] = puzzle_unique[&value]
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub type Piece = Vec<[i32; 3]>;
 pub type Pieces = Vec<Piece>;
 #[derive(Debug, Deserialize, Serialize)]
@@ -78,22 +99,7 @@ fn zeros() -> [[[i32; 3]; 3]; 3] {
 fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
     let mut puzzles_unique = HashSet::new();
     for mut puzzle in puzzles {
-        let mut puzzle_unique: HashMap<i32, i32> = HashMap::new();
-        let mut piece_count = 0;
-        for x in 0..3 {
-            for y in 0..3 {
-                for z in 0..3 {
-                    let value = puzzle.data[x][y][z];
-                    if let hash_map::Entry::Vacant(e) = puzzle_unique.entry(value) {
-                        piece_count += 1;
-                        e.insert(piece_count);
-                        puzzle.data[x][y][z] = puzzle_unique[&value]
-                    } else {
-                        puzzle.data[x][y][z] = puzzle_unique[&value]
-                    }
-                }
-            }
-        }
+        puzzle.make_standard();
         puzzles_unique.insert(puzzle);
     }
 
