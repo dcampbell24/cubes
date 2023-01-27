@@ -97,7 +97,7 @@ impl Sandbox for PolycubePieces {
                     for y in 0..3 {
                         for z in 0..3 {
                             if self.cube[x][y][z] {
-                                println!("{:?} {:?} {:?}", x, y, z);
+                                println!("{x} {y} {z}");
                                 self.pieces.data[len].push([x as i32, y as i32, z as i32]);
                             }
                         }

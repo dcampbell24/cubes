@@ -330,7 +330,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> Res
         for y in 0..3 {
             for z in 0..3 {
                 let color = puzzle.data[x as usize][y as usize][z as usize];
-                writeln!(string, "usemtl {}", color)?;
+                writeln!(string, "usemtl {color}")?;
                 write_box_points(&mut string, &x, &y, &z)?;
                 write_box_faces(&mut string, (x * 9 + y * 3 + z) as usize)?;
             }
@@ -373,7 +373,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> Result<(), Error>
             let path = dir.join(puzzle_string);
             fs::create_dir_all(&path)?;
 
-            let mut buffer = File::create(path.join(format!("piece_{}.obj", i)))?;
+            let mut buffer = File::create(path.join(format!("piece_{i}.obj")))?;
             buffer.write_all(&string.into_bytes())?;
         } else {
             return Err(Error::DirectoryError);
@@ -391,7 +391,7 @@ fn write_box_points(s: &mut String, x: &i32, y: &i32, z: &i32) -> Result<(), std
     writeln!(s, "v {} {} {}", x - 1, y - 1, z)?;
     writeln!(s, "v {} {} {}", x - 1, y, z)?;
     writeln!(s, "v {} {} {}", x, y - 1, z)?;
-    writeln!(s, "v {} {} {}", x, y, z)
+    writeln!(s, "v {x} {y} {z}")
 }
 
 #[rustfmt::skip]

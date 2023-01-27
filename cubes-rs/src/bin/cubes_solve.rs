@@ -21,7 +21,7 @@ fn main() -> Result<(), cubes::Error> {
 
     let solutions = solve(&puzzle);
     for solution in &solutions {
-        println!("{:}", solution);
+        println!("{solution:}");
     }
     write_obj_file_solution(&solutions[0], &puzzle_string)?;
 
