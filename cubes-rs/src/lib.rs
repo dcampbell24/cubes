@@ -385,12 +385,12 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> Result<(), Error>
 
 fn write_box_points(s: &mut String, x: &i32, y: &i32, z: &i32) -> Result<(), std::fmt::Error> {
     writeln!(s, "v {} {} {}", x - 1, y - 1, z - 1)?;
-    writeln!(s, "v {} {} {}", x - 1, y, z - 1)?;
-    writeln!(s, "v {} {} {}", x, y - 1, z - 1)?;
-    writeln!(s, "v {} {} {}", x, y, z - 1)?;
-    writeln!(s, "v {} {} {}", x - 1, y - 1, z)?;
-    writeln!(s, "v {} {} {}", x - 1, y, z)?;
-    writeln!(s, "v {} {} {}", x, y - 1, z)?;
+    writeln!(s, "v {} {y} {}", x - 1, z - 1)?;
+    writeln!(s, "v {x} {} {}", y - 1, z - 1)?;
+    writeln!(s, "v {x} {y} {}", z - 1)?;
+    writeln!(s, "v {} {} {z}", x - 1, y - 1)?;
+    writeln!(s, "v {} {y} {z}", x - 1)?;
+    writeln!(s, "v {x} {} {z}", y - 1)?;
     writeln!(s, "v {x} {y} {z}")
 }
 
