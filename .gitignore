@@ -1,4 +1,5 @@
 *.obj
+*.mod
 *.mtl
 target
 flamegraph.svg
