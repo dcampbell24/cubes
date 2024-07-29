@@ -25,11 +25,11 @@ directories = "4"
 
 [dependencies]
 bincode = "1"
-clap = { version = "4.0", features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.3", features = ["html_reports"] }
 directories = "4"
 env_logger = "0.9"
-iced = "0.6.0"
+iced = "0.6"
 log = "0.4"
 serde = { version = "1", features = ["derive"] }
 
