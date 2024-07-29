@@ -170,19 +170,19 @@ fn rotate_x(all_rotations: &mut Pieces, piece: &Piece) {
 }
 
 fn all_rotations(piece: &Piece) -> Pieces {
-    let all_rots = &mut Vec::new();
-    rotate_z(all_rots, piece);
+    let mut all_rots = Vec::new();
+    rotate_z(&mut all_rots, piece);
 
     for piece in all_rots.clone() {
-        rotate_y(all_rots, &piece)
+        rotate_y(&mut all_rots, &piece)
     }
 
     for piece in all_rots.clone() {
-        rotate_x(all_rots, &piece)
+        rotate_x(&mut all_rots, &piece)
     }
 
     let mut unique_solutions = HashSet::new();
-    let rots = push_to_zero(all_rots);
+    let rots = push_to_zero(&all_rots);
     for mut solution in rots {
         solution.sort();
         unique_solutions.insert(solution);
