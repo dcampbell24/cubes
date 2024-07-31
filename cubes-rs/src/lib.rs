@@ -103,7 +103,7 @@ fn unique_pieces(puzzles: Vec<PuzzleDense>) -> Vec<PuzzleDense> {
         puzzles_unique.insert(puzzle);
     }
 
-    puzzles_unique.into_iter().collect::<Vec<_>>()
+    puzzles_unique.into_iter().collect()
 }
 
 fn all_rotations_and_puts(
