@@ -10,16 +10,6 @@ documentation = "https://docs.rs/cubes"
 repository = "https://github.com/dcampbell24/cubes/tree/master/cubes-rs"
 readme = "README.md"
 
-[profile.release]
-lto = true
-# panic = "abort"
-# opt-level = "z" // optimize for size
-# strip = true
-# codegen-units = 1
-
-# RUSTFLAGS="-C target-cpu=native" 
-# debug = true
-
 [build-dependencies]
 directories = "4"
 
