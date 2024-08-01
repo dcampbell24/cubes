@@ -10,7 +10,7 @@ use cubes::{project_dir_cubes, Puzzle};
 pub fn main() -> iced::Result {
     PolycubePieces::run(Settings {
         window: window::Settings {
-            size: iced::Size::new(210.0, 500.0),
+            size: iced::Size::new(210.0, 520.0),
             ..Default::default()
         },
         ..Default::default()
