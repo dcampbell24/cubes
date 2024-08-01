@@ -7,6 +7,7 @@ The solver reads the puzzles in bincode format which the input program
 saves the pieces as. The solve program writes the pieces and one of the
 solutions as OBJ files. All data is written to the local data directory
 for the application.
+
 ```sh
 # On Linux
 $HOME/.local/share/cubes # or
