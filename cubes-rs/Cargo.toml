@@ -16,7 +16,7 @@ directories = "4"
 [dependencies]
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
-criterion = { version = "0.3", features = ["html_reports"] }
+criterion = { version = "0.5", features = ["html_reports"] }
 directories = "4"
 env_logger = "0.9"
 iced = "0.6"
