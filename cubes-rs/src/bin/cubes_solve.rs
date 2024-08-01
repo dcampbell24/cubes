@@ -4,9 +4,9 @@ use std::time::Instant;
 use std::{fs, io};
 
 use cubes::{project_dir_cubes, solve, write_obj_file, write_obj_file_solution};
-use cubes::{Error, Pieces, Puzzle};
+use cubes::{Pieces, Puzzle};
 
-fn main() -> Result<(), cubes::Error> {
+fn main() -> anyhow::Result<()> {
     let now = Instant::now();
     env_logger::init();
     let cli = Cli::parse();
@@ -34,12 +34,9 @@ fn main() -> Result<(), cubes::Error> {
     Ok(())
 }
 
-fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
+fn choose_puzzle(cli: Cli) -> anyhow::Result<(Pieces, String)> {
     if let Some(pieces) = cli.pieces {
-        match get_puzzle(&pieces) {
-            Ok(data) => Ok((data, pieces)),
-            Err(_) => Err(Error::DirectoryError),
-        }
+        get_puzzle(&pieces).map(|data| (data, pieces))
     } else {
         let name = match cli.puzzle {
             PuzzleOption::Blue => "blue".to_owned(),
@@ -52,40 +49,31 @@ fn choose_puzzle(cli: Cli) -> Result<(Pieces, String), Error> {
             PuzzleOption::Towo => "towo".into(),
         };
 
-        match get_puzzle(&name) {
-            Ok(data) => Ok((data, name)),
-            Err(_) => Err(Error::DirectoryError),
-        }
+        get_puzzle(&name).map(|data| (data, name))
     }
 }
 
-fn get_puzzle(puzzle: &str) -> Result<Pieces, Error> {
-    if let Some(proj_dirs) = project_dir_cubes() {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join("puzzles");
-        let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(puzzle))?)?;
-        Ok(decoded.data)
-    } else {
-        Err(Error::DirectoryError)
-    }
+fn get_puzzle(puzzle: &str) -> anyhow::Result<Pieces> {
+    let proj_dirs = project_dir_cubes()?;
+    let dir = proj_dirs.data_dir();
+    let path = dir.join("puzzles");
+    let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(puzzle))?)?;
+    Ok(decoded.data)
 }
 
-fn list_puzzles() -> Result<(), Error> {
-    if let Some(proj_dirs) = project_dir_cubes() {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join("puzzles");
-        let mut entries = fs::read_dir(path)?
-            .map(|res| res.map(|e| e.path()))
-            .collect::<Result<Vec<_>, io::Error>>()?;
+fn list_puzzles() -> anyhow::Result<()> {
+    let proj_dirs = project_dir_cubes()?;
+    let dir = proj_dirs.data_dir();
+    let path = dir.join("puzzles");
+    let mut entries = fs::read_dir(path)?
+        .map(|res| res.map(|e| e.path()))
+        .collect::<Result<Vec<_>, io::Error>>()?;
 
-        entries.sort();
-        for entry in entries {
-            println!("{:?}", entry.file_name().expect("there is a file"));
-        }
-        Ok(())
-    } else {
-        Err(Error::DirectoryError)
+    entries.sort();
+    for entry in entries {
+        println!("{:?}", entry.file_name().expect("there is a file"));
     }
+    Ok(())
 }
 
 /// Program to display the 3x3 cube solution(s).

@@ -1,3 +1,4 @@
+use anyhow::Context;
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
@@ -9,32 +10,6 @@ use std::{fmt, fs};
 
 const SIN: [i32; 4] = [0, 1, 0, -1];
 const COS: [i32; 4] = [1, 0, -1, 0];
-
-#[derive(Debug)]
-pub enum Error {
-    BincodeError(bincode::Error),
-    DirectoryError,
-    FmtError(std::fmt::Error),
-    IoError(std::io::Error),
-}
-
-impl From<bincode::Error> for Error {
-    fn from(other: bincode::Error) -> Error {
-        Error::BincodeError(other)
-    }
-}
-
-impl From<std::fmt::Error> for Error {
-    fn from(other: std::fmt::Error) -> Error {
-        Error::FmtError(other)
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(other: std::io::Error) -> Error {
-        Error::IoError(other)
-    }
-}
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct PuzzleDense {
@@ -272,7 +247,7 @@ fn push_to_zero(puzzle: &Pieces) -> Pieces {
     pieces
 }
 
-fn write_mtl_file_solution(puzzle_string: &str) -> Result<(), Error> {
+fn write_mtl_file_solution(puzzle_string: &str) -> anyhow::Result<()> {
     let mut string = String::new();
 
     writeln!(string, "# Rust generated MTL file")?;
@@ -301,20 +276,17 @@ fn write_mtl_file_solution(puzzle_string: &str) -> Result<(), Error> {
     writeln!(string, "newmtl 8")?;
     writeln!(string, "Kd 0.3 0.3 0.3")?;
 
-    if let Some(proj_dirs) = project_dir_cubes() {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join(puzzle_string);
-        fs::create_dir_all(&path)?;
+    let proj_dirs = project_dir_cubes().context("directory error")?;
+    let dir = proj_dirs.data_dir();
+    let path = dir.join(puzzle_string);
+    fs::create_dir_all(&path)?;
 
-        let mut buffer = File::create(path.join("solution.mtl"))?;
-        buffer.write_all(&string.into_bytes())?;
-        Ok(())
-    } else {
-        Err(Error::DirectoryError)
-    }
+    let mut buffer = File::create(path.join("solution.mtl"))?;
+    buffer.write_all(&string.into_bytes())?;
+    Ok(())
 }
 
-pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> Result<(), Error> {
+pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> anyhow::Result<()> {
     write_mtl_file_solution(puzzle_string)?;
 
     let mut string = String::new();
@@ -333,20 +305,17 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> Res
         }
     }
 
-    if let Some(proj_dirs) = project_dir_cubes() {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join(puzzle_string);
-        fs::create_dir_all(&path)?;
+    let proj_dirs = project_dir_cubes().context("directory error")?;
+    let dir = proj_dirs.data_dir();
+    let path = dir.join(puzzle_string);
+    fs::create_dir_all(&path)?;
 
-        let mut buffer = File::create(path.join("solution.obj"))?;
-        buffer.write_all(&string.into_bytes())?;
-        Ok(())
-    } else {
-        Err(Error::DirectoryError)
-    }
+    let mut buffer = File::create(path.join("solution.obj"))?;
+    buffer.write_all(&string.into_bytes())?;
+    Ok(())
 }
 
-pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> Result<(), Error> {
+pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> anyhow::Result<()> {
     write_mtl_file(puzzle_string)?;
 
     for (i, piece) in puzzle.iter().enumerate() {
@@ -364,16 +333,13 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> Result<(), Error>
             write_box_faces(&mut string, i)?;
         }
 
-        if let Some(proj_dirs) = project_dir_cubes() {
-            let dir = proj_dirs.data_dir();
-            let path = dir.join(puzzle_string);
-            fs::create_dir_all(&path)?;
+        let proj_dirs = project_dir_cubes()?;
+        let dir = proj_dirs.data_dir();
+        let path = dir.join(puzzle_string);
+        fs::create_dir_all(&path)?;
 
-            let mut buffer = File::create(path.join(format!("piece_{i}.obj")))?;
-            buffer.write_all(&string.into_bytes())?;
-        } else {
-            return Err(Error::DirectoryError);
-        }
+        let mut buffer = File::create(path.join(format!("piece_{i}.obj")))?;
+        buffer.write_all(&string.into_bytes())?;
     }
 
     Ok(())
@@ -400,7 +366,7 @@ fn write_box_faces(s: &mut String, i: usize) -> Result<(), std::fmt::Error> {
     writeln!(s, "f {} {} {} {}", i * 8 + 2, i * 8 + 6, i * 8 + 8, i * 8 + 4)
 }
 
-fn write_mtl_file(color: &str) -> Result<(), Error> {
+fn write_mtl_file(color: &str) -> anyhow::Result<()> {
     let mut string = String::new();
 
     writeln!(string, "# Rust generated MTL file")?;
@@ -418,19 +384,16 @@ fn write_mtl_file(color: &str) -> Result<(), Error> {
         _ => writeln!(string, "Kd 0.6 0.6 0.6")?,
     }
 
-    if let Some(proj_dirs) = project_dir_cubes() {
-        let dir = proj_dirs.data_dir();
-        let path = dir.join(color);
-        fs::create_dir_all(&path)?;
+    let proj_dirs = project_dir_cubes()?;
+    let dir = proj_dirs.data_dir();
+    let path = dir.join(color);
+    fs::create_dir_all(&path)?;
 
-        let mut buffer = File::create(path.join("piece.mtl"))?;
-        buffer.write_all(&string.into_bytes())?;
-        Ok(())
-    } else {
-        Err(Error::DirectoryError)
-    }
+    let mut buffer = File::create(path.join("piece.mtl"))?;
+    buffer.write_all(&string.into_bytes())?;
+    Ok(())
 }
 
-pub fn project_dir_cubes() -> Option<ProjectDirs> {
-    ProjectDirs::from("", "", "Cubes")
+pub fn project_dir_cubes() -> anyhow::Result<ProjectDirs> {
+    ProjectDirs::from("", "", "Cubes").context("directory error")
 }
