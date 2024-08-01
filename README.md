@@ -14,7 +14,7 @@ Directories
   downloaded with `go get github.com/davekong/cubes/cubes-go`
 
 * cubes-rs: Rust version of the solver and an input program. Reads the
-  puzzles in bincode format which the input program saves the pieces as.
+  puzzles in RON format which the input program saves the pieces as.
   Writes the pieces and one of the solutions as OBJ files. All writes
   are to the local data directory.
 
