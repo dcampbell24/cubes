@@ -19,7 +19,7 @@ clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.5", features = ["html_reports"] }
 directories = "5"
 env_logger = "0.11"
-iced = "0.6"
+iced = "0.12"
 log = "0.4"
 ron = "0.8"
 serde = { version = "1", features = ["derive"] }

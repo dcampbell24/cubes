@@ -10,7 +10,7 @@ use cubes::{project_dir_cubes, Puzzle};
 pub fn main() -> iced::Result {
     PolycubePieces::run(Settings {
         window: window::Settings {
-            size: (210, 500),
+            size: iced::Size::new(210.0, 500.0),
             ..Default::default()
         },
         ..Default::default()
@@ -124,7 +124,8 @@ impl Sandbox for PolycubePieces {
     }
 
     fn view(&self) -> Element<Message> {
-        let name = row!["Name: ", text_input("", &self.name, Message::NameChanged),]
+        let text_input = text_input("", &self.name).on_input(Message::NameChanged);
+        let name = row!["Name: ", text_input]
             .padding(10)
             .align_items(Alignment::Start);
 
