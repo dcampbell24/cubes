@@ -14,8 +14,7 @@ readme = "README.md"
 directories = "4"
 
 [dependencies]
-anyhow = "1.0.86"
-bincode = "1"
+anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.3", features = ["html_reports"] }
 directories = "4"

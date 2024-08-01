@@ -108,12 +108,16 @@ impl Sandbox for PolycubePieces {
             Message::SaveAllPressed => {
                 let proj_dirs = project_dir_cubes().expect("expected a cubes directory");
                 let dir = proj_dirs.data_dir();
-                let path = dir.join("puzzles");
+                let mut path = dir.join("puzzles");
                 fs::create_dir_all(&path).unwrap();
 
-                let mut buffer = File::create(path.join(&self.name)).unwrap();
-                let encoded: Vec<u8> = bincode::serialize(&self.pieces).unwrap();
-                buffer.write_all(&encoded).unwrap();
+                path = path.join(&self.name);
+                path.set_extension("ron");
+                let mut buffer = File::create(&path).unwrap();
+                let encoded =
+                    ron::ser::to_string_pretty(&self.pieces, ron::ser::PrettyConfig::default())
+                        .unwrap();
+                buffer.write_all(encoded.as_bytes()).unwrap();
                 println!("saved {}", self.name);
             }
         }

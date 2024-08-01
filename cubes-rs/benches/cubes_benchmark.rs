@@ -7,8 +7,9 @@ use cubes::{project_dir_cubes, Pieces, Puzzle};
 fn get_puzzle(puzzle: &str) -> anyhow::Result<Pieces> {
     let proj_dirs = project_dir_cubes()?;
     let dir = proj_dirs.data_dir();
-    let path = dir.join("puzzles");
-    let decoded: Puzzle = bincode::deserialize(&fs::read(path.join(&puzzle))?)?;
+    let mut path = dir.join("puzzles").join(&puzzle);
+    path.set_extension("ron");
+    let decoded: Puzzle = ron::from_str(&fs::read_to_string(path)?)?;
     Ok(decoded.data)
 }
 

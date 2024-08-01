@@ -13,13 +13,25 @@ fn main() -> Result<(), Error> {
         let dir = proj_dirs.data_dir();
         let path = dir.join("puzzles");
         fs::create_dir_all(&path)?;
-        fs::copy(Path::new("puzzles").join("blue"), path.join("blue"))?;
-        fs::copy(Path::new("puzzles").join("minotaur"), path.join("minotaur"))?;
-        fs::copy(Path::new("puzzles").join("orange"), path.join("orange"))?;
-        fs::copy(Path::new("puzzles").join("red"), path.join("red"))?;
-        fs::copy(Path::new("puzzles").join("white"), path.join("white"))?;
-        fs::copy(Path::new("puzzles").join("yellow"), path.join("yellow"))?;
-        fs::copy(Path::new("puzzles").join("towo"), path.join("towo"))?;
+        fs::copy(Path::new("puzzles").join("blue.ron"), path.join("blue.ron"))?;
+        fs::copy(
+            Path::new("puzzles").join("minotaur.ron"),
+            path.join("minotaur.ron"),
+        )?;
+        fs::copy(
+            Path::new("puzzles").join("orange.ron"),
+            path.join("orange.ron"),
+        )?;
+        fs::copy(Path::new("puzzles").join("red.ron"), path.join("red.ron"))?;
+        fs::copy(
+            Path::new("puzzles").join("white.ron"),
+            path.join("white.ron"),
+        )?;
+        fs::copy(
+            Path::new("puzzles").join("yellow.ron"),
+            path.join("yellow.ron"),
+        )?;
+        fs::copy(Path::new("puzzles").join("towo.ron"), path.join("towo.ron"))?;
     }
 
     Ok(())
