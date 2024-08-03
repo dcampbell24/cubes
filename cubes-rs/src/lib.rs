@@ -1,7 +1,7 @@
-#![deny(
+#![warn(
     clippy::all,
 //  clippy::restriction,
-//  clippy::pedantic,
+    clippy::pedantic,
 //  clippy::nursery,
     clippy::cargo,
 )]
@@ -50,9 +50,9 @@ impl PuzzleDense {
                     if let hash_map::Entry::Vacant(e) = puzzle_unique.entry(value) {
                         piece_count += 1;
                         e.insert(piece_count);
-                        self.data[x][y][z] = puzzle_unique[&value]
+                        self.data[x][y][z] = puzzle_unique[&value];
                     } else {
-                        self.data[x][y][z] = puzzle_unique[&value]
+                        self.data[x][y][z] = puzzle_unique[&value];
                     }
                 }
             }
@@ -67,7 +67,7 @@ pub struct Puzzle {
     pub data: Pieces,
 }
 
-pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
+#[must_use] pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
 
     let mut solutions = vec![PuzzleDense { data: zeros() }];
@@ -151,7 +151,7 @@ fn rotate_x(all_rotations: &mut Pieces, piece: &Piece) {
             ];
             rotations.push(rotated_xyz);
         }
-        all_rotations.push(rotations)
+        all_rotations.push(rotations);
     }
 }
 
@@ -160,17 +160,17 @@ fn all_rotations(piece: &Piece) -> Pieces {
     rotate_z(&mut all_rots, piece);
 
     for piece in all_rots.clone() {
-        rotate_y(&mut all_rots, &piece)
+        rotate_y(&mut all_rots, &piece);
     }
 
     for piece in all_rots.clone() {
-        rotate_x(&mut all_rots, &piece)
+        rotate_x(&mut all_rots, &piece);
     }
 
     let mut unique_solutions = HashSet::new();
     let rots = push_to_zero(&all_rots);
     for mut solution in rots {
-        solution.sort();
+        solution.sort_unstable();
         unique_solutions.insert(solution);
     }
 
