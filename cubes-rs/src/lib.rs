@@ -314,7 +314,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> any
             for z in 0..3 {
                 let color = puzzle.data[x as usize][y as usize][z as usize];
                 writeln!(string, "usemtl {color}")?;
-                write_box_points(&mut string, &x, &y, &z)?;
+                write_box_points(&mut string, x, y, z)?;
                 write_box_faces(&mut string, (x * 9 + y * 3 + z) as usize)?;
             }
         }
@@ -341,7 +341,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> anyhow::Result<()
         writeln!(string, "usemtl {}", 0)?;
 
         for [x, y, z] in piece {
-            write_box_points(&mut string, x, y, z)?;
+            write_box_points(&mut string, *x, *y, *z)?;
         }
 
         for (i, _) in piece.iter().enumerate() {
@@ -360,7 +360,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> anyhow::Result<()
     Ok(())
 }
 
-fn write_box_points(s: &mut String, x: &i32, y: &i32, z: &i32) -> Result<(), std::fmt::Error> {
+fn write_box_points(s: &mut String, x: i32, y: i32, z: i32) -> Result<(), std::fmt::Error> {
     writeln!(s, "v {} {} {}", x - 1, y - 1, z - 1)?;
     writeln!(s, "v {} {y} {}", x - 1, z - 1)?;
     writeln!(s, "v {x} {} {}", y - 1, z - 1)?;
