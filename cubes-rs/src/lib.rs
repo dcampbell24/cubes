@@ -1,15 +1,15 @@
 #![warn(
     clippy::all,
 //  clippy::restriction,
-//  clippy::pedantic,
+    clippy::pedantic,
 //  clippy::nursery,
     clippy::cargo,
 )]
 #![allow(
-    clippy::module_name_repetitions,
-    clippy::similar_names,
-    clippy::struct_field_names,
-    clippy::too_many_lines,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::missing_errors_doc,
     clippy::multiple_crate_versions
 )]
 
@@ -67,7 +67,8 @@ pub struct Puzzle {
     pub data: Pieces,
 }
 
-#[must_use] pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
+#[must_use]
+pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
 
     let mut solutions = vec![PuzzleDense { data: zeros() }];
