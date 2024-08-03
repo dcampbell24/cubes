@@ -14,7 +14,7 @@ fn get_puzzle(puzzle: &str) -> anyhow::Result<Pieces> {
 }
 
 fn minotaur() {
-    cubes::solve(&get_puzzle("minotaur").unwrap());
+    let _ = cubes::solve(&get_puzzle("minotaur").unwrap());
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
