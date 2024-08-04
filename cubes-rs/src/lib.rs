@@ -7,7 +7,6 @@
 )]
 #![allow(
     clippy::cast_possible_wrap,
-    clippy::cast_sign_loss,
     clippy::missing_errors_doc,
     clippy::multiple_crate_versions
 )]
@@ -200,23 +199,31 @@ fn all_puts(already_placed: &[PuzzleDense], piece_count: i32, piece: &Piece) -> 
     let mut all_solutions = Vec::new();
     let (max_x, max_y, max_z) = max_xyz(piece);
 
+    let max_x = usize::try_from(max_x).unwrap();
+    let max_y = usize::try_from(max_y).unwrap();
+    let max_z = usize::try_from(max_z).unwrap();
+
     for x_step in 0..3 - max_x {
         for y_step in 0..3 - max_y {
             for z_step in 0..3 - max_z {
                 let already_placed = already_placed.to_owned();
                 'next_piece: for mut puzzle in already_placed {
                     for [x, y, z] in piece {
-                        if puzzle.data[(x + x_step) as usize][(y + y_step) as usize]
-                            [(z + z_step) as usize]
-                            > 0
-                        {
+                        let x = usize::try_from(*x).unwrap();
+                        let y = usize::try_from(*y).unwrap();
+                        let z = usize::try_from(*z).unwrap();
+
+                        if puzzle.data[x + x_step][y + y_step][z + z_step] > 0 {
                             continue 'next_piece;
                         }
                     }
 
                     for [x, y, z] in piece {
-                        puzzle.data[(x + x_step) as usize][(y + y_step) as usize]
-                            [(z + z_step) as usize] = piece_count;
+                        let x = usize::try_from(*x).unwrap();
+                        let y = usize::try_from(*y).unwrap();
+                        let z = usize::try_from(*z).unwrap();
+
+                        puzzle.data[x + x_step][y + y_step][z + z_step] = piece_count;
                     }
 
                     all_solutions.push(puzzle);
@@ -305,13 +312,17 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> any
     writeln!(string, "# Rust generated OBJ file.")?;
     writeln!(string, "mtllib solution.mtl")?;
 
-    for x in 0..3 {
+    for x in 0i32..3 {
         for y in 0..3 {
             for z in 0..3 {
-                let color = puzzle.data[x as usize][y as usize][z as usize];
+                let x_index = usize::try_from(x)?;
+                let y_index = usize::try_from(y)?;
+                let z_index = usize::try_from(z)?;
+
+                let color = puzzle.data[x_index][y_index][z_index];
                 writeln!(string, "usemtl {color}")?;
                 write_box_points(&mut string, x, y, z)?;
-                write_box_faces(&mut string, (x * 9 + y * 3 + z) as usize)?;
+                write_box_faces(&mut string, x * 9 + y * 3 + z)?;
             }
         }
     }
@@ -340,7 +351,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> anyhow::Result<()
             write_box_points(&mut string, *x, *y, *z)?;
         }
 
-        for (i, _) in piece.iter().enumerate() {
+        for (i, _) in (0i32..).zip(piece.iter()) {
             write_box_faces(&mut string, i)?;
         }
 
@@ -368,7 +379,7 @@ fn write_box_points(s: &mut String, x: i32, y: i32, z: i32) -> Result<(), std::f
 }
 
 #[rustfmt::skip]
-fn write_box_faces(s: &mut String, i: usize) -> Result<(), std::fmt::Error> {
+fn write_box_faces(s: &mut String, i: i32) -> Result<(), std::fmt::Error> {
     writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 4, i * 8 + 3)?;
     writeln!(s, "f {} {} {} {}", i * 8 + 5, i * 8 + 6, i * 8 + 8, i * 8 + 7)?;
     writeln!(s, "f {} {} {} {}", i * 8 + 1, i * 8 + 2, i * 8 + 6, i * 8 + 5)?;
