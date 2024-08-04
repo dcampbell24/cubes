@@ -69,7 +69,7 @@ pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
 
     let mut solutions = vec![PuzzleDense { data: zeros() }];
-    for (i, piece) in (0i32..).zip(pieces.iter()) {
+    for (i, piece) in (0..).zip(pieces.iter()) {
         if i == 0 {
             solutions = all_puts(&solutions, i + 1, piece);
         } else {
@@ -311,7 +311,7 @@ pub fn write_obj_file_solution(puzzle: &PuzzleDense, puzzle_string: &str) -> any
     writeln!(string, "# Rust generated OBJ file.")?;
     writeln!(string, "mtllib solution.mtl")?;
 
-    for x in 0i32..3 {
+    for x in 0..3 {
         for y in 0..3 {
             for z in 0..3 {
                 let x_index = usize::try_from(x)?;
@@ -350,7 +350,7 @@ pub fn write_obj_file(puzzle: &Pieces, puzzle_string: &str) -> anyhow::Result<()
             write_box_points(&mut string, *x, *y, *z)?;
         }
 
-        for (i, _) in (0i32..).zip(piece.iter()) {
+        for (i, _) in (0..).zip(piece.iter()) {
             write_box_faces(&mut string, i)?;
         }
 
