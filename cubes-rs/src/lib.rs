@@ -6,7 +6,6 @@
     clippy::cargo,
 )]
 #![allow(
-    clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
     clippy::missing_errors_doc,
@@ -72,11 +71,11 @@ pub fn solve(puzzle: &Pieces) -> Vec<PuzzleDense> {
     let pieces = push_to_zero(puzzle);
 
     let mut solutions = vec![PuzzleDense { data: zeros() }];
-    for (i, piece) in pieces.iter().enumerate() {
+    for (i, piece) in (0i32..).zip(pieces.iter()) {
         if i == 0 {
-            solutions = all_puts(&solutions, (i + 1) as i32, piece);
+            solutions = all_puts(&solutions, i + 1, piece);
         } else {
-            solutions = all_rotations_and_puts(&solutions, (i + 1) as i32, piece);
+            solutions = all_rotations_and_puts(&solutions, i + 1, piece);
         }
     }
 
