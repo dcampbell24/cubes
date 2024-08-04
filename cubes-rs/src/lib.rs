@@ -6,7 +6,6 @@
     clippy::cargo,
 )]
 #![allow(
-    clippy::cast_possible_wrap,
     clippy::missing_errors_doc,
     clippy::multiple_crate_versions
 )]
