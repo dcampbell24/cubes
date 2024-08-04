@@ -175,11 +175,7 @@ fn all_rotations(piece: &Piece) -> Pieces {
         unique_solutions.insert(solution);
     }
 
-    let mut rotations = Vec::new();
-    for solution in unique_solutions {
-        rotations.push(solution);
-    }
-    rotations
+    unique_solutions.into_iter().collect()
 }
 
 fn max_xyz(piece: &Piece) -> (i32, i32, i32) {
