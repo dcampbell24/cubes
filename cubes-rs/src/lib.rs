@@ -5,10 +5,7 @@
 //  clippy::nursery,
     clippy::cargo,
 )]
-#![allow(
-    clippy::missing_errors_doc,
-    clippy::multiple_crate_versions
-)]
+#![allow(clippy::missing_errors_doc, clippy::multiple_crate_versions)]
 
 use anyhow::Context;
 use directories::ProjectDirs;
