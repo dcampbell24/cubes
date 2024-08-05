@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use std::fs;
+use std::{fs, time::Duration};
 
 use cubes::{project_dir_cubes, Pieces, Puzzle};
 
@@ -21,5 +21,10 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("minotaur", |b| b.iter(minotaur));
 }
 
-criterion_group!(benches, criterion_benchmark);
+criterion_group!(
+    name = benches;
+    config = Criterion::default().measurement_time(Duration::from_secs(10));
+    targets = criterion_benchmark
+);
+
 criterion_main!(benches);
