@@ -1,0 +1,14 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "words": [
+        "bincode",
+        "folderid",
+        "newmtl",
+        "mtllib",
+        "polycube",
+        "rustfmt",
+        "towo",
+        "usemtl"
+    ]
+}
