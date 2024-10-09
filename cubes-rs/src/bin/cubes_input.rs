@@ -52,7 +52,7 @@ impl PolycubePieces {
 impl Default for PolycubePieces {
     fn default() -> Self {
         Self {
-            name: "".to_owned(),
+            name: String::new(),
             cube: [[[false; 3]; 3]; 3],
             pieces: Puzzle { data: Vec::new() },
         }
