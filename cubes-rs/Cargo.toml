@@ -3,6 +3,7 @@ name = "cubes"
 description = "Applications for determining how to put a cube together."
 version = "4.1.0"
 edition = "2021"
+rust-version = "1.75"
 license = "MIT OR Apache-2.0"
 keywords = ["cubes"]
 categories = ["mathematics", "rendering::data-formats"]
