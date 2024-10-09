@@ -98,7 +98,11 @@ impl Sandbox for PolycubePieces {
                         for z in 0..3 {
                             if self.cube[x][y][z] {
                                 println!("{x} {y} {z}");
-                                self.pieces.data[len].push([x as i32, y as i32, z as i32]);
+                                self.pieces.data[len].push([
+                                    i32::try_from(x).unwrap(),
+                                    i32::try_from(y).unwrap(),
+                                    i32::try_from(z).unwrap(),
+                                ]);
                             }
                         }
                     }
