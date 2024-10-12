@@ -13,7 +13,7 @@ repository = "https://github.com/dcampbell24/cubes/tree/master/cubes-rs"
 readme = "README.md"
 
 [build-dependencies]
-directories = "4"
+directories = "5"
 
 [dependencies]
 anyhow = "1"
