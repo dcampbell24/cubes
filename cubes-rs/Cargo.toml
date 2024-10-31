@@ -26,6 +26,13 @@ log = "0.4"
 ron = "0.8"
 serde = { version = "1", features = ["derive"] }
 
+[lints.clippy]
+cargo = "warn"
+pedantic = "warn"
+
+missing_errors_doc = { level = "allow", priority = 1}
+multiple_crate_versions = { level = "allow", priority = 1 }
+
 [[bench]]
 name = "cubes_benchmark"
 harness = false

@@ -1,12 +1,3 @@
-#![warn(
-    clippy::all,
-//  clippy::restriction,
-    clippy::pedantic,
-//  clippy::nursery,
-    clippy::cargo,
-)]
-#![allow(clippy::missing_errors_doc, clippy::multiple_crate_versions)]
-
 use anyhow::Context;
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
