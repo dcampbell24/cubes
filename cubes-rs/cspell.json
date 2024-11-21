@@ -3,11 +3,13 @@
     "language": "en",
     "words": [
         "bincode",
+        "clippy",
         "folderid",
         "newmtl",
         "mtllib",
         "polycube",
         "rustfmt",
+        "serde",
         "towo",
         "usemtl"
     ]
