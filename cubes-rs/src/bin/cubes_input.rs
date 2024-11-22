@@ -1,6 +1,6 @@
 use iced::widget::{button, column, radio, row, text_input};
 use iced::widget::{Column, Row};
-use iced::{window, Alignment, Element, Sandbox, Settings};
+use iced::{window, Alignment, Element};
 
 use std::fs::{self, File};
 use std::io::Write;
@@ -8,13 +8,16 @@ use std::io::Write;
 use cubes::{project_dir_cubes, Puzzle};
 
 pub fn main() -> iced::Result {
-    PolycubePieces::run(Settings {
-        window: window::Settings {
-            size: iced::Size::new(210.0, 520.0),
-            ..Default::default()
-        },
+    iced::application(
+        "Polycube Pieces",
+        PolycubePieces::update,
+        PolycubePieces::view,
+    )
+    .window(window::Settings {
+        size: iced::Size::new(210.0, 450.0),
         ..Default::default()
     })
+    .run()
 }
 
 struct PolycubePieces {
@@ -67,17 +70,7 @@ enum Message {
     SaveAllPressed,
 }
 
-impl Sandbox for PolycubePieces {
-    type Message = Message;
-
-    fn new() -> Self {
-        PolycubePieces::default()
-    }
-
-    fn title(&self) -> String {
-        String::from("Polycube Pieces")
-    }
-
+impl PolycubePieces {
     fn update(&mut self, message: Message) {
         match message {
             Message::NameChanged(name) => {
@@ -122,7 +115,7 @@ impl Sandbox for PolycubePieces {
                     ron::ser::to_string_pretty(&self.pieces, ron::ser::PrettyConfig::default())
                         .unwrap();
                 buffer.write_all(encoded.as_bytes()).unwrap();
-                println!("saved {:?}", path);
+                println!("saved {path:?}");
             }
         }
     }
@@ -131,7 +124,7 @@ impl Sandbox for PolycubePieces {
         let text_input = text_input("", &self.name).on_input(Message::NameChanged);
         let name = row!["Name: ", text_input]
             .padding(10)
-            .align_items(Alignment::Start);
+            .align_y(Alignment::Start);
 
         let mut pieces_matrix = Vec::new();
         for x in 0..3 {
@@ -169,10 +162,10 @@ impl Sandbox for PolycubePieces {
         let buttons = row![save_piece, save_all]
             .padding(10)
             .spacing(10)
-            .align_items(Alignment::Start);
+            .align_y(Alignment::Start);
 
         column![name, pieces_col, buttons]
-            .align_items(Alignment::Start)
+            .align_x(Alignment::Start)
             .into()
     }
 }
