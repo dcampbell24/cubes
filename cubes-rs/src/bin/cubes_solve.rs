@@ -73,7 +73,7 @@ fn list_puzzles() -> anyhow::Result<()> {
 
     entries.sort();
     for entry in entries {
-        println!("{:?}", entry.file_name().expect("there is a file"));
+        println!("{:?}", entry);
     }
     Ok(())
 }
