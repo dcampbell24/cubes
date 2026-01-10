@@ -120,7 +120,7 @@ impl PolycubePieces {
         }
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         let text_input = text_input("", &self.name).on_input(Message::NameChanged);
         let name = row!["Name: ", text_input]
             .padding(10)
