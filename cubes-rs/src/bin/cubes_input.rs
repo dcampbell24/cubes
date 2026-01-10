@@ -115,7 +115,7 @@ impl PolycubePieces {
                     ron::ser::to_string_pretty(&self.pieces, ron::ser::PrettyConfig::default())
                         .unwrap();
                 buffer.write_all(encoded.as_bytes()).unwrap();
-                println!("saved {path:?}");
+                println!("saved {}", path.display());
             }
         }
     }

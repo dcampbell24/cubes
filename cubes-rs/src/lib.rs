@@ -387,7 +387,7 @@ fn write_mtl_file(color: &str) -> anyhow::Result<()> {
         "minotaur" => writeln!(string, "Kd 0.3 0.3 0.3")?,
         "orange" => writeln!(string, "Kd 1.0 0.3 0.0")?,
         "red" => writeln!(string, "Kd 1.0 0.0 0.0")?,
-        "white" => writeln!(string, "Kd 0.6 0.6 0.6")?,
+        // "white" => writeln!(string, "Kd 0.6 0.6 0.6")?,
         "yellow" => writeln!(string, "Kd 1.0 1.0 0.0")?,
         // other
         _ => writeln!(string, "Kd 0.6 0.6 0.6")?,
