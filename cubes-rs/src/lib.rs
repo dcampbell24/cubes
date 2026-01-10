@@ -47,7 +47,7 @@ impl PuzzleDense {
 
 pub type Piece = Vec<[i32; 3]>;
 pub type Pieces = Vec<Piece>;
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Puzzle {
     pub data: Pieces,
 }

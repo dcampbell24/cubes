@@ -9,10 +9,11 @@ use cubes::{project_dir_cubes, Puzzle};
 
 pub fn main() -> iced::Result {
     iced::application(
-        "Polycube Pieces",
+        PolycubePieces::default,
         PolycubePieces::update,
         PolycubePieces::view,
     )
+    .title("Polycube Pieces")
     .window(window::Settings {
         size: iced::Size::new(210.0, 450.0),
         ..Default::default()
@@ -20,6 +21,7 @@ pub fn main() -> iced::Result {
     .run()
 }
 
+#[derive(Clone, Debug)]
 struct PolycubePieces {
     name: String,
     cube: [[[bool; 3]; 3]; 3],
