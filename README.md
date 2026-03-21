@@ -2,8 +2,8 @@
 
 [![REUSE status]][reuse]
 
-[REUSE status]: https://api.reuse.software/badge/github.com/dcampbell24/mdbook-djot
-[reuse]: https://api.reuse.software/info/github.com/dcampbell24/mdbook-djot
+[REUSE status]: https://api.reuse.software/badge/github.com/dcampbell24/cubes
+[reuse]: https://api.reuse.software/info/github.com/dcampbell24/cubes
 
 Applications for determining how to put a cube together and for creating
 visualizations of the solution. The Rust version is superior to the
