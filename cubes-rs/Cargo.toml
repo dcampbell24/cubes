@@ -2,8 +2,8 @@
 name = "cubes"
 description = "Applications for determining how to put a cube together."
 version = "5.1.0"
-edition = "2021"
-rust-version = "1.75"
+edition = "2024"
+rust-version = "1.88"
 license = "MIT OR Apache-2.0"
 keywords = ["cubes"]
 categories = ["mathematics", "rendering::data-formats"]
@@ -14,7 +14,7 @@ readme = "README.md"
 include = ["src/**/*", "README.md", "CHANGELOG.md", "puzzles/*", "build.rs"]
 
 [build-dependencies]
-directories = "5"
+directories = "6"
 
 [dependencies]
 anyhow = "1"
