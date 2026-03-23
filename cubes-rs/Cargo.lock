@@ -835,7 +835,7 @@ checksum = "e162d0c2e2068eb736b71e5597eff0b9944e6b973cd9f37b6a288ab9bf20e300"
 
 [[package]]
 name = "cubes"
-version = "5.2.0"
+version = "5.2.1"
 dependencies = [
  "anyhow",
  "clap",
