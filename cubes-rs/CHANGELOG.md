@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Added REUSE badge.
+- Upgraded to iced 14.
 - Updated to rust 2024 and updated dependencies.
 
 ## [5.0.0] 2024-11-21
