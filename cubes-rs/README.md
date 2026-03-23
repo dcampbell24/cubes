@@ -1,8 +1,8 @@
 # Cubes
 
-[![github]][github-link] [![REUSE status]][reuse]
+[![GitHub]][github-link] [![REUSE status]][reuse]
 
-[github]: https://img.shields.io/badge/github-8da0cb?logo=github
+[GitHub]: https://img.shields.io/badge/github-8da0cb?logo=github
 [github-link]: https://github.com/dcampbell24/mdbook-djot
 [REUSE status]: https://api.reuse.software/badge/github.com/dcampbell24/cubes
 [reuse]: https://api.reuse.software/info/github.com/dcampbell24/cubes
