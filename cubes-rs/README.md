@@ -1,9 +1,11 @@
 # Cubes
 
-[![GitHub]][github-link] [![REUSE status]][reuse]
+[![GitHub]][github-link] [![crates-io]][crates-io-link]  [![REUSE status]][reuse]
 
 [GitHub]: https://img.shields.io/badge/github-8da0cb?logo=github
 [github-link]: https://github.com/dcampbell24/cubes
+[crates-io]: https://img.shields.io/badge/crates.io-fc8d62?logo=rust
+[crates-io-link]: https://crates.io/crates/cubes
 [REUSE status]: https://api.reuse.software/badge/github.com/dcampbell24/cubes
 [reuse]: https://api.reuse.software/info/github.com/dcampbell24/cubes
 
