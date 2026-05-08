@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- cargo update
+
 ## [5.2.1] 2026-03-23
+
+### Changed
 
 - Fixed github link.
 
@@ -25,6 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgraded `cubes_input` to iced 13.
 
-[5.2.1]: https://crates.io/crates/cubes/5.2.0
+[5.2.1]: https://crates.io/crates/cubes/5.2.1
 [5.2.0]: https://crates.io/crates/cubes/5.2.0
 [5.0.0]: https://crates.io/crates/cubes/5.0.0
